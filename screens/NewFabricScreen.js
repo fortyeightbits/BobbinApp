@@ -4,9 +4,8 @@ import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import { Icon } from 'react-native-elements';
 
-export const types = {
+const types = {
   ADD: 'ADD',
-  DELETE: 'DELETE',
 }
 
 const initialState = {
@@ -16,14 +15,14 @@ const initialState = {
   ],
 }
 
-const randomId = () => Math.random().toString()
-const createFabric = () => ({ id: randomId(), text: 'Fabric 3', imgreq: require('../assets/sloth.jpg')})
+//const randomId = () => Math.random().toString()
+const createFabric = () => ({ id: '3', text: 'Fabric 3', imgreq: require('../assets/sloth.jpg')})
 
-export const actionCreators = {
+const actionCreators = {
   add: () => ({ type: types.ADD, payload: createFabric() }),
 }
 
-export function reducer(state, action) {
+function reducer(state, action) {
   switch (action.type) {
     case types.ADD:
       return { ...state, inventory: [...state.inventory, action.payload] } //sets state.inventory to [x]
