@@ -1,37 +1,23 @@
-import React, { useReducer } from 'react';
-import { FlatList, Image, Text, View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Image, Text, View, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
-import { Icon } from 'react-native-elements';
+import { Input, Icon, Button } from 'react-native-elements';
 
-const types = {
-  ADD: 'ADD',
-}
+const temp = { id: '2', name: 'Fabric 3', width: 60, yardage: 2, type: 'twill', fiber: 'cotton', imgreq: require('../assets/sloth.jpg') }
 
-const initialState = {
-  inventory: [
-    { id: '0', text: 'Fabric 1', imgreq: require('../assets/sloth.jpg') },
-    { id: '1', text: 'Fabric 2', imgreq: require('../assets/waves.jpg') },
-  ],
-}
+const randomId = () => Math.random().toString()
+const createFabric = (fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber) => (
+  { id: randomId(), name: fabric_name, width: fabric_width, yardage: fabric_yardage, 
+type: fabric_type, fiber: fabric_fiber, imgreq: require('../assets/sloth.jpg')})
 
-//const randomId = () => Math.random().toString()
-const createFabric = () => ({ id: '3', text: 'Fabric 3', imgreq: require('../assets/sloth.jpg')})
+export default function NewFabricScreen({ navigation, route }) {
 
-const actionCreators = {
-  add: () => ({ type: types.ADD, payload: createFabric() }),
-}
-
-function reducer(state, action) {
-  switch (action.type) {
-    case types.ADD:
-      return { ...state, inventory: [...state.inventory, action.payload] } //sets state.inventory to [x]
-  }
-}
-
-export default function HaberdasheryScreen() {
-
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [fabric_name, setName] = useState('')
+  const [fabric_width, setWidth] = useState('')
+  const [fabric_yardage, setYardage] = useState('')
+  const [fabric_type, setType] = useState('')
+  const [fabric_fiber, setFiber] = useState('')
 
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -45,27 +31,18 @@ export default function HaberdasheryScreen() {
   return (
     <View style={styles.container}>
 
-      <View style={styles.titlecontainer}>
-        <Text style={styles.title}>Haberdashery</Text>
-      </View>
-
-      <FlatList
-      data={state.inventory}
-      renderItem={( { item }) => (
-        <React.Fragment>
-        <View style={styles.listcontainer}>
-          <Text style={styles.row}>{item.text}</Text>
-          <Image resizeMode='cover' source={item.imgreq}/>
-        </View>
-        </React.Fragment>
-      )}
-      keyExtractor={(item) => item.id}
-      />
-      <Icon type='ionicon' name='ios-add-circle-outline' color='powderblue' size={50}
+      <View style={styles.inputcontainer}>
+      <Input placeholder='Name' value={fabric_name} onChangeText={(value) => setName(value)}/>
+      <Input placeholder='Width' value={fabric_width} onChangeText={(value) => setWidth(value)}/>
+      <Input placeholder='Yardage' value={fabric_yardage} onChangeText={(value) => setYardage(value)}/>
+      <Input placeholder='Type' value={fabric_type} onChangeText={(value) => setType(value)}/> 
+      <Input placeholder='Fiber' value={fabric_fiber} onChangeText={(value) => setFiber(value)}/>
+      <Button icon={ <Icon type='ionicon' name="ios-add-circle"/>} title="Add"
       onPress={() => {
-        dispatch(actionCreators.add()) //dispatch with type ADD and payload createFabric return val, 
-        //given to reducer as actions.type action.payload
-      }}/>
+        navigation.navigate('HaberdasheryScreen', createFabric(fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber)); 
+      }}
+      />
+      </View>
 
     </View>
   )
@@ -75,32 +52,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,   
   },
-  listcontainer: {
+  inputcontainer: {
     height: 150,
-  },
-  addicon: {
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  row: {
-    padding: 15,
-    marginBottom: 5,
-    backgroundColor: 'powderblue',
-    fontFamily: 'Proxima',
-  },
-  titlecontainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  title: {
-    fontSize: 20,
-    fontFamily: 'SpaceMono-Regular',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
   image: {
     height: undefined,

@@ -1,71 +1,63 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { FlatList, Image, Text, View, StyleSheet } from 'react-native';
-import { useFonts } from 'expo-font';
-import { AppLoading } from 'expo';
 import { Icon } from 'react-native-elements';
+
+export const initialState = {
+  inventory: [
+    { id: '0', name: 'Fabric 1', width: 60, yardage: 2, type: 'twill', fiber: 'cotton', imgreq: require('../assets/sloth.jpg') },
+    { id: '1', name: 'Fabric 2', width: 45, yardage: 5, type: 'satin', fiber: 'polyester', imgreq: require('../assets/waves.jpg') },
+  ],
+}
 
 export const types = {
   ADD: 'ADD',
   DELETE: 'DELETE',
 }
 
-const initialState = {
-  inventory: [
-    { id: '0', text: 'Fabric 1', imgreq: require('../assets/sloth.jpg') },
-    { id: '1', text: 'Fabric 2', imgreq: require('../assets/waves.jpg') },
-  ],
-}
-
-const randomId = () => Math.random().toString()
-const createFabric = () => ({ id: randomId(), text: 'Fabric 3', imgreq: require('../assets/sloth.jpg')})
-
-export const actionCreators = {
-  add: () => ({ type: types.ADD, payload: createFabric() }),
+const actionCreators = {
+    add: (x) => ({type: types.ADD, payload: x}),
+  delete: () => ({}),
 }
 
 export function reducer(state, action) {
   switch (action.type) {
     case types.ADD:
       return { ...state, inventory: [...state.inventory, action.payload] } //sets state.inventory to [x]
-  }
+    }
 }
 
-export default function HaberdasheryScreen() {
+export default function HaberdasheryScreen({ navigation, route}) {
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  let [fontsLoaded] = useFonts({
-    'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
-    'Proxima': require('../assets/fonts/ProximaNova-Regular.otf'),
-  });
-
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
+  useEffect(() => {
+    if (route.params) {
+      console.log(route.params)
+      dispatch(actionCreators.add(route.params))
+      //dispatch with type ADD and payload [createFabric's return], given to reducer as actions.type and action.payload
+      //dispatch(actionCreators.add(fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber)) 
+    }
+  }, [route.params]);
 
   return (
     <View style={styles.container}>
-
-      <View style={styles.titlecontainer}>
-        <Text style={styles.title}>Haberdashery</Text>
-      </View>
 
       <FlatList
       data={state.inventory}
       renderItem={( { item }) => (
         <React.Fragment>
         <View style={styles.listcontainer}>
-          <Text style={styles.row}>{item.text}</Text>
+        <Text style={styles.row}>{item.name + ": " + item.yardage + " yards of " + item.fiber + " " + item.type}</Text>
           <Image resizeMode='cover' source={item.imgreq}/>
         </View>
         </React.Fragment>
       )}
       keyExtractor={(item) => item.id}
       />
+
       <Icon type='ionicon' name='ios-add-circle-outline' color='powderblue' size={50}
       onPress={() => {
-        dispatch(actionCreators.add()) //dispatch with type ADD and payload createFabric return val, 
-        //given to reducer as actions.type action.payload
+        navigation.push('NewFabricScreen');
       }}/>
 
     </View>
@@ -88,15 +80,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     backgroundColor: 'powderblue',
     fontFamily: 'Proxima',
-  },
-  titlecontainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  title: {
-    fontSize: 20,
-    fontFamily: 'SpaceMono-Regular',
   },
   separator: {
     marginVertical: 30,
