@@ -21,8 +21,10 @@ const actionCreators = {
 
 export function reducer(state, action) {
   switch (action.type) {
-    case types.ADD:
+    case types.ADD: {
+      if (state.inventory.every((item) => item.id !== action.payload.id))
       return { ...state, inventory: [...state.inventory, action.payload] } //sets state.inventory to [x]
+    }
     case types.MODIFY:
       return { ...state, inventory: state.inventory.map((item) => item.id === action.payload.id ? action.payload : item)}
   }
@@ -50,12 +52,13 @@ export default function HaberdasheryScreen({ navigation, route }) {
 
       <FlatList
       data={state.inventory}
-      renderItem={( { item }) => (
+      renderItem={( { item }) => {
+        return (
         <TouchableOpacity style={styles.listcontainer} onPress={() => { navigation.push('FabricScreen', item)}}>
         <Text key={item.id} style={styles.row}>{item.name + ": " + item.yardage + " yards of " + item.fiber + " " + item.type}</Text>
           <Image resizeMode='cover' source={item.imgreq}/>
           </TouchableOpacity>
-      )}
+      )}}
       keyExtractor={(item) => item.id}
       />
 

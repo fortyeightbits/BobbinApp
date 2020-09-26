@@ -7,6 +7,7 @@ import { AppLoading } from 'expo'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import HomeScreen from './screens/HomeScreen'
 import HaberdasheryNav from './navigation/HaberdasheryNav'
+import ProjectNav from './navigation/ProjectNav'
 
 //import HomeScreen from './screens/HomeScreen'
 
@@ -43,15 +44,25 @@ export default function App() {
           fontSize: 20,
           fontFamily: 'SpaceMono-Regular', },
         }}
-        component={HomeScreen} />
-        <Drawer.Screen name="HaberdasheryNav" 
+      component={HomeScreen} />
+
+      <Drawer.Screen name="HaberdasheryNav" 
         options={{
         title: 'Haberdashery',
         headerTitleStyle: {
           fontSize: 20,
           fontFamily: 'SpaceMono-Regular', },
         }}
-        component={HaberdasheryNav} />   
+      component={HaberdasheryNav} />
+
+        <Drawer.Screen name="ProjectNav" 
+        options={{
+        title: 'Projects',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontFamily: 'SpaceMono-Regular', },
+        }}
+        component={ProjectNav} />   
       </Drawer.Navigator>
     </NavigationContainer>
   )
