@@ -3,8 +3,7 @@ import { Image, Text, View, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import { Input, Icon, Button } from 'react-native-elements';
-
-const temp = { id: '2', name: 'Fabric 3', width: 60, yardage: 2, type: 'twill', fiber: 'cotton', imgreq: require('../assets/sloth.jpg') }
+import { types } from './HaberdasheryScreen'
 
 const randomId = () => Math.random().toString()
 const createFabric = (fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber) => (
@@ -39,7 +38,7 @@ export default function NewFabricScreen({ navigation, route }) {
       <Input placeholder='Fiber' value={fabric_fiber} onChangeText={(value) => setFiber(value)}/>
       <Button icon={ <Icon type='ionicon' name="ios-add-circle"/>} title="Add"
       onPress={() => {
-        navigation.navigate('HaberdasheryScreen', createFabric(fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber)); 
+        navigation.navigate('HaberdasheryScreen', {action_type: types.ADD, fabricobj: createFabric(fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber)}); 
       }}
       />
       </View>

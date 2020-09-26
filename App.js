@@ -1,14 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useReducer } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import HaberdasheryScreen from './screens/HaberdasheryScreen'
-import NewFabricScreen from './screens/NewFabricScreen';
-import { createStackNavigator } from '@react-navigation/stack'
+import { StatusBar } from 'expo-status-bar'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
-import { useFonts } from 'expo-font';
-import { AppLoading } from 'expo';
+import { useFonts } from 'expo-font'
+import { AppLoading } from 'expo'
+import { createDrawerNavigator } from '@react-navigation/drawer'
+import HomeScreen from './screens/HomeScreen'
+import HaberdasheryNav from './navigation/HaberdasheryNav'
 
-const Root = createStackNavigator()
+//import HomeScreen from './screens/HomeScreen'
+
+/*
+export default function App() {
+  return (
+    <HomeScreen/>
+  )
+
+}
+*/
+
+const Drawer = createDrawerNavigator();
 
 export default function App() {
 
@@ -21,32 +32,33 @@ export default function App() {
     return <AppLoading />;
   }
   
+
   return (
     <NavigationContainer>
-    <Root.Navigator>
-      <Root.Screen name="HaberdasheryScreen" 
+      <Drawer.Navigator>
+      <Drawer.Screen name="HomeScreen" 
+        options={{
+        title: 'Home',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontFamily: 'SpaceMono-Regular', },
+        }}
+        component={HomeScreen} />
+        <Drawer.Screen name="HaberdasheryNav" 
         options={{
         title: 'Haberdashery',
         headerTitleStyle: {
           fontSize: 20,
-          fontFamily: 'SpaceMono-Regular',
-        },
+          fontFamily: 'SpaceMono-Regular', },
         }}
-        component={HaberdasheryScreen} />
-      <Root.Screen name="NewFabricScreen" 
-        options={{
-          title: 'New Fabric',
-          headerTitleStyle: {
-            fontSize: 20,
-            fontFamily: 'SpaceMono-Regular',
-          },
-          }}
-          component={NewFabricScreen} />
-    </Root.Navigator>
+        component={HaberdasheryNav} />   
+      </Drawer.Navigator>
     </NavigationContainer>
   )
+  return (
+    <PatternEditorScreen/>
+  )
 }
-
 
 const styles = StyleSheet.create({
   container: {

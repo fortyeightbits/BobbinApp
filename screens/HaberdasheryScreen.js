@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from 'react';
-import { FlatList, Image, Text, View, StyleSheet } from 'react-native';
+import { FlatList, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export const initialState = {
@@ -11,30 +11,36 @@ export const initialState = {
 
 export const types = {
   ADD: 'ADD',
-  DELETE: 'DELETE',
+  MODIFY: 'MODIFY',
 }
 
 const actionCreators = {
     add: (x) => ({type: types.ADD, payload: x}),
-  delete: () => ({}),
+    modify: (x) => ({type: types.MODIFY, payload: x}),
 }
 
 export function reducer(state, action) {
   switch (action.type) {
     case types.ADD:
       return { ...state, inventory: [...state.inventory, action.payload] } //sets state.inventory to [x]
-    }
+    case types.MODIFY:
+      return { ...state, inventory: state.inventory.map((item) => item.id === action.payload.id ? action.payload : item)}
+  }
 }
 
-export default function HaberdasheryScreen({ navigation, route}) {
+export default function HaberdasheryScreen({ navigation, route }) {
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
     if (route.params) {
-      console.log(route.params)
-      dispatch(actionCreators.add(route.params))
-      //dispatch with type ADD and payload [createFabric's return], given to reducer as actions.type and action.payload
+      switch (route.params.action_type) {
+        case types.ADD:
+          dispatch(actionCreators.add(route.params.fabricobj));
+        case types.MODIFY: 
+          dispatch(actionCreators.modify(route.params.fabricobj));
+      }
+      //dispatch with type ADD and payload fabricobj, given to reducer as actions.type and action.payload
       //dispatch(actionCreators.add(fabric_name, fabric_width, fabric_yardage, fabric_type, fabric_fiber)) 
     }
   }, [route.params]);
@@ -45,12 +51,10 @@ export default function HaberdasheryScreen({ navigation, route}) {
       <FlatList
       data={state.inventory}
       renderItem={( { item }) => (
-        <React.Fragment>
-        <View style={styles.listcontainer}>
-        <Text style={styles.row}>{item.name + ": " + item.yardage + " yards of " + item.fiber + " " + item.type}</Text>
+        <TouchableOpacity style={styles.listcontainer} onPress={() => { navigation.push('FabricScreen', item)}}>
+        <Text key={item.id} style={styles.row}>{item.name + ": " + item.yardage + " yards of " + item.fiber + " " + item.type}</Text>
           <Image resizeMode='cover' source={item.imgreq}/>
-        </View>
-        </React.Fragment>
+          </TouchableOpacity>
       )}
       keyExtractor={(item) => item.id}
       />
