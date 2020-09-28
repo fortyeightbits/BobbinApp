@@ -49,7 +49,6 @@ export default function HaberdasheryScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-
       <FlatList
       data={state.inventory}
       renderItem={( { item }) => {
@@ -66,7 +65,6 @@ export default function HaberdasheryScreen({ navigation, route }) {
       onPress={() => {
         navigation.push('NewFabricScreen');
       }}/>
-
     </View>
   )
 }

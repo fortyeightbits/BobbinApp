@@ -9,17 +9,6 @@ import HomeScreen from './screens/HomeScreen'
 import HaberdasheryNav from './navigation/HaberdasheryNav'
 import ProjectNav from './navigation/ProjectNav'
 
-//import HomeScreen from './screens/HomeScreen'
-
-/*
-export default function App() {
-  return (
-    <HomeScreen/>
-  )
-
-}
-*/
-
 const Drawer = createDrawerNavigator();
 
 export default function App() {
@@ -32,7 +21,6 @@ export default function App() {
   if (!fontsLoaded) {
     return <AppLoading />;
   }
-  
 
   return (
     <NavigationContainer>
@@ -66,9 +54,7 @@ export default function App() {
       </Drawer.Navigator>
     </NavigationContainer>
   )
-  return (
-    <PatternEditorScreen/>
-  )
+
 }
 
 const styles = StyleSheet.create({

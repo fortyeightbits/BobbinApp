@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 
 export const initialState = {
   projectlist: [
-    { id: '0', projectName: 'The Cottagecore Dress', patternName: 'McCall\'s M7974',
+    { id: '0', projectName: 'The Cottagecore Dress', patternName: 'McCall\'s M7974', notions: [],
       imgreq: [require('../assets/line.png'), require('../assets/green.png') ] },
   ],
 }
@@ -20,7 +20,6 @@ const actionCreators = {
 }
 
 export function reducer(state, action) {
-  console.log(action.payload)
   switch (action.type) {
     case types.ADD:{
       if (state.projectlist.every((item) => item.id !== action.payload.id))

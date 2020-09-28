@@ -1,15 +1,19 @@
-import React, { useReducer, useEffect } from 'react'
-import { FlatList, Image, Text, View, StyleSheet } from 'react-native'
+import React, {useState} from 'react'
+import { StyleSheet } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import ProjectListScreen from '../screens/ProjectListScreen'
 import NewProjectScreen from '../screens/NewProjectScreen'
 import ProjectScreen from '../screens/ProjectScreen'
-import EditProjectScreen from '../screens/EditProjectScreen'
 
 const Stack = createStackNavigator();
 
-export default function ProjectNav({ navigation, route}) {
+//TODO: not working
+//export const MyContext = React.createContext();
+
+export default function ProjectNav() {
+
+  //<MyContext.Provider value={"Hello"}>
 
   return (
     <NavigationContainer independent={true}>
@@ -24,7 +28,7 @@ export default function ProjectNav({ navigation, route}) {
         component={ProjectListScreen} />
       <Stack.Screen name="NewProjectScreen" 
         options={{
-        title: 'New Project',
+        title: 'Modify Project',
         headerTitleStyle: {
           fontSize: 20,
           fontFamily: 'SpaceMono-Regular', },
@@ -38,17 +42,10 @@ export default function ProjectNav({ navigation, route}) {
           fontFamily: 'SpaceMono-Regular', },
         }}
         component={ProjectScreen} />
-      <Stack.Screen name="EditProjectScreen" 
-        options={{
-        title: 'Edit Project',
-        headerTitleStyle: {
-          fontSize: 20,
-          fontFamily: 'SpaceMono-Regular', },
-        }}
-        component={EditProjectScreen} />
-      </Stack.Navigator>      
+      </Stack.Navigator>
     </NavigationContainer>
   )
+  //</MyContext.Provider>
 }
 
 const styles = StyleSheet.create({
