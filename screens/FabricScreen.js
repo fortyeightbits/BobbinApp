@@ -18,7 +18,7 @@ export default function FabricScreen({ navigation, route }) {
       </View>
       <Button icon={ <Icon type='ionicon' name="ios-create"/>} title="Edit"
       onPress={() => {
-        navigation.navigate('EditFabricScreen', route.params); 
+        navigation.push('NewFabricScreen', route.params); 
       }}
       />
     </View>

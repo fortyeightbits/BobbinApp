@@ -1,27 +1,24 @@
-import React, { useReducer, useEffect } from 'react'
-import { FlatList, Image, Text, View, StyleSheet } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
+import React from 'react'
+import { StyleSheet } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
-import HaberdasheryScreen from '../screens/HaberdasheryScreen'
+import FabricListScreen from '../screens/FabricListScreen'
 import NewFabricScreen from '../screens/NewFabricScreen'
 import FabricScreen from '../screens/FabricScreen'
-import EditFabricScreen from '../screens/EditFabricScreen'
 
 const Stack = createStackNavigator();
 
-export default function HaberdasheryNav({ navigation, route}) {
+export default function FabricNav({ navigation, route}) {
 
   return (
-    <NavigationContainer independent={true}>
       <Stack.Navigator>  
-      <Stack.Screen name="HaberdasheryScreen" 
+      <Stack.Screen name="FabricListScreen" 
         options={{
-        title: 'Haberdashery',
+        title: 'Fabrics',
         headerTitleStyle: {
           fontSize: 20,
           fontFamily: 'SpaceMono-Regular', },
         }}
-        component={HaberdasheryScreen} />
+        component={FabricListScreen} />
       <Stack.Screen name="NewFabricScreen" 
         options={{
         title: 'New Fabric',
@@ -38,16 +35,7 @@ export default function HaberdasheryNav({ navigation, route}) {
         fontFamily: 'SpaceMono-Regular', },
         }}
         component={FabricScreen} />
-      <Stack.Screen name="EditFabricScreen" 
-        options={{
-        title: 'Edit Fabric',
-        headerTitleStyle: {
-        fontSize: 20,
-        fontFamily: 'SpaceMono-Regular', },
-        }}
-        component={EditFabricScreen} />
-      </Stack.Navigator>      
-    </NavigationContainer>
+      </Stack.Navigator>
   )
 }
 

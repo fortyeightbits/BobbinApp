@@ -23,7 +23,7 @@ export default function HomeScreen({ navigation, route}) {
       <Text style={styles.cardtext}>{"This should have a fabric count but I can't get context to work :( "}</Text>
       <Button
         type="outline" title='Go to Fabric List' buttonStyle={styles.button} titleStyle={styles.buttonText}
-        onPress={() => navigation.navigate('HaberdasheryNav')}/>
+        onPress={() => navigation.push('FabricNav')}/>
       </Card>
       <Card>
       <Card.Title style={styles.headerTitleStyle}>Projects</Card.Title>
@@ -31,7 +31,7 @@ export default function HomeScreen({ navigation, route}) {
       <Text style={styles.cardtext}>{"This should have a project count but I can't get context to work :( "}</Text>
       <Button
         type="outline" title='Go to Project List' titleStyle={styles.buttonText}
-        onPress={() => navigation.navigate('ProjectNav')}/>
+        onPress={() => navigation.push('ProjectNav')}/>
       </Card>
     </View>
   )

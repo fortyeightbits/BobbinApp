@@ -16,7 +16,6 @@ export default function ProjectNav() {
   //<MyContext.Provider value={"Hello"}>
 
   return (
-    <NavigationContainer independent={true}>
       <Stack.Navigator>  
       <Stack.Screen name="ProjectListScreen" 
         options={{
@@ -43,7 +42,6 @@ export default function ProjectNav() {
         }}
         component={ProjectScreen} />
       </Stack.Navigator>
-    </NavigationContainer>
   )
   //</MyContext.Provider>
 }
