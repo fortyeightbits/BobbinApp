@@ -6,6 +6,10 @@ import { Input, Icon, Button } from 'react-native-elements';
 
 export default function ProjectScreen({ navigation, route }) {
 
+  let notionText = []
+  if (route.params.notions)
+    notionText = route.params.notions.map((item, index) => <Text key={index.toString()}>{item.name}</Text>)
+
   return (
     <View>
       <ScrollView horizontal>
@@ -15,10 +19,11 @@ export default function ProjectScreen({ navigation, route }) {
       <View style={styles.info}>
       <Text>{route.params.projectName}</Text>
       <Text>{route.params.patternName}</Text>
+      {notionText}
       </View>
       <Button icon={ <Icon type='ionicon' name="ios-create"/>} title="Edit"
       onPress={() => {
-        navigation.navigate('EditProjectScreen', route.params); 
+        navigation.navigate('NewProjectScreen', route.params);
       }}/>
     </View>
   )
@@ -30,7 +35,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 300,
-    width: 250,
+    width: 300,
   },
   info: {
     padding: 20,

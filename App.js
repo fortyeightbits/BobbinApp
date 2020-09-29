@@ -5,20 +5,9 @@ import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { AppLoading } from 'expo'
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import HomeScreen from './screens/HomeScreen'
+import HomeNav from './navigation/HomeNav'
 import HaberdasheryNav from './navigation/HaberdasheryNav'
 import ProjectNav from './navigation/ProjectNav'
-
-//import HomeScreen from './screens/HomeScreen'
-
-/*
-export default function App() {
-  return (
-    <HomeScreen/>
-  )
-
-}
-*/
 
 const Drawer = createDrawerNavigator();
 
@@ -32,19 +21,18 @@ export default function App() {
   if (!fontsLoaded) {
     return <AppLoading />;
   }
-  
 
   return (
     <NavigationContainer>
       <Drawer.Navigator>
-      <Drawer.Screen name="HomeScreen" 
+      <Drawer.Screen name="HomeNav" 
         options={{
         title: 'Home',
         headerTitleStyle: {
           fontSize: 20,
           fontFamily: 'SpaceMono-Regular', },
         }}
-      component={HomeScreen} />
+      component={HomeNav} />
 
       <Drawer.Screen name="HaberdasheryNav" 
         options={{
@@ -66,9 +54,7 @@ export default function App() {
       </Drawer.Navigator>
     </NavigationContainer>
   )
-  return (
-    <PatternEditorScreen/>
-  )
+
 }
 
 const styles = StyleSheet.create({
