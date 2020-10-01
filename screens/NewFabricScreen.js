@@ -50,8 +50,8 @@ export default function NewFabricScreen({ navigation, route }) {
           <Text style={[styles.paramtext, {paddingLeft:40}]}>Fractions</Text>
         </View>
         <View style={styles.flexrow}>
-          <Input containerStyle={styles.widthinput} maxLength={3} keyboardType="number-pad" value={fabric_width.toString()} onChangeText={(value) => setWidth(value)}/>
-          <Input containerStyle={[styles.yardinput, {paddingLeft:55}]} maxLength={4} keyboardType="number-pad" value={fabric_yardage.toString()} onChangeText={(value) => setYardage(value)}/>
+          <Input containerStyle={[styles.input, {width: 130}]} maxLength={3} keyboardType="number-pad" value={fabric_width.toString()} onChangeText={(value) => setWidth(value)}/>
+          <Input containerStyle={[styles.input, {paddingLeft:55, width:128}]} maxLength={4} keyboardType="number-pad" value={fabric_yardage.toString()} onChangeText={(value) => setYardage(value)}/>
           <Picker
             selectedValue={fabric_yard_frac} style={styles.yarddropdown} mode='dropdown'
             onValueChange={(itemValue) => setYardPicker(itemValue)}>
@@ -72,11 +72,11 @@ export default function NewFabricScreen({ navigation, route }) {
           <Text style={[styles.paramtext, {paddingLeft:85}]}>Weight</Text>
         </View>
         <View style={styles.flexrow}>
-          <Input containerStyle={styles.weaveinput} maxLength={20} value={fabric_type} onChangeText={(value) => setType(value)}/> 
-          <Input containerStyle={styles.weaveinput} maxLength={15} value={fabric_weight} onChangeText={(value) => setWeight(value)}/> 
+          <Input containerStyle={[styles.input, {width:185}]} maxLength={20} value={fabric_type} onChangeText={(value) => setType(value)}/> 
+          <Input containerStyle={[styles.input, {width:185}]} maxLength={15} value={fabric_weight} onChangeText={(value) => setWeight(value)}/> 
         </View>
-        <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.addicon} color='#4f99e3'/>} 
-                type="outline" title="Save Fabric" containerStyle={styles.button}
+        <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
+                type="outline" title={route.params ? "Save Fabric" : "Add Fabric"} containerStyle={styles.button}
         onPress={() => {
           if (fabric_name === '')
             toggleOverlay()
@@ -105,9 +105,6 @@ const styles = StyleSheet.create({
   button:{
     padding: 5,
   },
-  addicon:{
-    padding: 5,
-  },
   inputcontainer: {
     padding: 10,
   },
@@ -125,20 +122,8 @@ const styles = StyleSheet.create({
   flexcol:{
     flexDirection: 'column',
   },
-  widthinput:{
-    width: 130,
-    fontFamily: 'Proxima',
-  },
-  yardinput:{
-    width: 128,
-    fontFamily: 'Proxima',
-  },
   yarddropdown:{
     width: 100,
-  },
-  weaveinput:{
-    width: 185,
-    fontFamily: 'Proxima',
   },
   image: {
     height: undefined,
