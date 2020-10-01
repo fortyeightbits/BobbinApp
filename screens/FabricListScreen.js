@@ -6,8 +6,8 @@ import { AppLoading } from 'expo';
 
 export const fabricInitialState = {
   inventory: [
-    { id: '0', name: 'Sloths', width: 60, yardage: 2, type: 'twill', fiber: 'cotton', imgreq: require('../assets/sloth.jpg') },
-    { id: '1', name: 'Waves', width: 45, yardage: 5, type: 'satin', fiber: 'polyester', imgreq: require('../assets/waves.jpg') },
+    { id: '0', name: 'Sloths', width: 60, yardage: 2, yardfrac: '', type: 'twill', fiber: 'cotton', imgreq: require('../assets/sloth.jpg') },
+    { id: '1', name: 'Waves', width: 45, yardage: 5, yardfrac: '', type: 'satin', fiber: 'polyester', imgreq: require('../assets/waves.jpg') },
   ],
 }
 export const types = {
@@ -61,7 +61,9 @@ export default function FabricListScreen({ navigation, route }) {
         <TouchableOpacity style={styles.listcontainer} onPress={() => { navigation.push('FabricScreen', item)}}>
         <Text style={styles.fabricdes}>
           <Text style={styles.fabricname}>{item.name}</Text>
-          {"  " + item.yardage + (item.yardage ? " yards of " : "") + item.fiber + " " + item.type}
+          {"  " + item.yardage + " " + (item.yardfrac ? item.yardfrac + " " : "") + ((item.yardage || item.yardfrac) ? "yards " : "") 
+          + ((item.fiber || item.type) && (item.yardage || item.yardfrac) ? "of " : "") 
+          + ((item.fiber || item.type) ? (item.fiber + " " + item.type) : "")}
         </Text>
         <Image resizeMode='cover' style={styles.image} source={item.imgreq}/>
         </TouchableOpacity>
@@ -86,8 +88,8 @@ const styles = StyleSheet.create({
   addicon: {
     padding: 10,
     position: 'absolute',
-    right: 10,
-    bottom: 10,
+    right: 20,
+    bottom: 20,
   },
   fabricdes: {
     padding: 15,

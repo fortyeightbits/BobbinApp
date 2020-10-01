@@ -42,7 +42,7 @@ export default function NewProjectScreen({ navigation, route }) {
     //})
 /*   <Text>{"Fabrics: "}</Text>  
       <Picker
-        selected_fabric={selected_fabric}
+        selectedValue={selected_fabric}
         style={{ height: 50, width: 200 }}
         onValueChange={(itemValue, itemIndex) => setSelectedFabric(itemValue)}>
       </Picker>*/
