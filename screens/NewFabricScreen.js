@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Image, Text, View, StyleSheet, Picker } from 'react-native';
+import { Image, Text, View, StyleSheet, Picker, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import { Input, Icon, Button, Overlay } from 'react-native-elements';
 import { types } from './FabricListScreen'
+import Autocomplete from 'react-native-autocomplete-input';
 
 const randomId = () => Math.random().toString()
+const typedatabase = ['Batik', 'Broadcloth', 'Canvas', 'Chiffon', 'Quilting cotton', 'Flannel', 'Fleece', 'Jersey', 'Lawn', 'Linen', 'Poplin', 'Crepe',
+'Crepe de Chine', 'Voile', 'Batiste', 'Brocade', 'Challis', 'Chambray', 'Denim', 'Chenille', 'Corduroy', 'Dupioni', 'Eyelet', 'Muslin', 'Gabardine', 'Gauze',
+'Lace', 'Lawn', 'Neoprene', 'Organza', 'Oxford', 'Satin', 'Sateen', 'Shantung', 'Tricot', 'Tulle', 'Twill', 'Velvet']
 
 export default function NewFabricScreen({ navigation, route }) {
 
@@ -17,10 +21,22 @@ export default function NewFabricScreen({ navigation, route }) {
   const [fabric_fiber, setFiber] = useState(route.params ? (route.params.fiber) : '')
   const [fabric_weight, setWeight] = useState(route.params ? (route.params.weight) : '')
   const [fabric_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
+  const [filtered, setFiltered] = useState([]); //Autocomplete filtered data
 
   /* Error message overlay */
   const [visible, setVisible] = useState(false);
   const toggleOverlay = () => {setVisible(!visible);};
+
+  /* method called everytime when we change the value of the input */
+  const findType = (query) => {
+    if (query) {
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      setFiltered(
+          typedatabase.filter((type) => type.search(regex) >= 0)
+      );
+    } else 
+      setFiltered([]);
+  };
 
   const createFabric = (fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight) => (
     { id: randomId(), name: fabric_name, width: fabric_width, yardage: fabric_yardage, yardfrac: fabric_yard_frac,
@@ -71,8 +87,22 @@ export default function NewFabricScreen({ navigation, route }) {
           <Text style={styles.paramtext}>Weave/Type</Text>
           <Text style={[styles.paramtext, {paddingLeft:85}]}>Weight</Text>
         </View>
+
         <View style={styles.flexrow}>
-          <Input containerStyle={[styles.input, {width:185}]} maxLength={20} value={fabric_type} onChangeText={(value) => setType(value)}/> 
+          <Autocomplete
+            containerStyle={styles.accontainer} inputContainerStyle={styles.acinput}
+            autoCapitalize='sentences' autoCorrect={false} data={filtered} defaultValue={fabric_type} 
+            keyExtractor={(index) => index.toString()} onChangeText={(text) => {findType(text); setType(text)}}
+            renderItem={({item, index}) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setType(item);
+                  setFiltered([]);
+                }}>
+                <Text key={index.toString()}>{item}</Text>
+              </TouchableOpacity>
+            )}
+          />
           <Input containerStyle={[styles.input, {width:185}]} maxLength={15} value={fabric_weight} onChangeText={(value) => setWeight(value)}/> 
         </View>
         <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
@@ -101,6 +131,18 @@ export default function NewFabricScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,   
+  },
+  temp:{
+    backgroundColor: 'blue',
+  },
+  accontainer:{
+    width: 180,
+  },
+  acinput:{
+    borderBottomWidth: 1,
+    borderColor: '#86939e',
+    borderWidth: 0,
+    backgroundColor: '#86939e',
   },
   button:{
     padding: 5,
