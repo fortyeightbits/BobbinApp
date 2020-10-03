@@ -96,10 +96,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#e9f2f5',
     fontFamily: 'Proxima',
     fontSize: 15,
+    textTransform: 'lowercase',
   },
   fabricname: {
     fontSize: 18,
     fontWeight: 'bold',
+    textTransform: 'capitalize',
   },
   image: {
     height: 117,

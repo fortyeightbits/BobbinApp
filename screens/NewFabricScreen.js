@@ -10,6 +10,8 @@ const randomId = () => Math.random().toString()
 const typedatabase = ['Batik', 'Broadcloth', 'Canvas', 'Chiffon', 'Quilting cotton', 'Flannel', 'Fleece', 'Jersey', 'Lawn', 'Linen', 'Poplin', 'Crepe',
 'Crepe de Chine', 'Voile', 'Batiste', 'Brocade', 'Challis', 'Chambray', 'Denim', 'Chenille', 'Corduroy', 'Dupioni', 'Eyelet', 'Muslin', 'Gabardine', 'Gauze',
 'Lace', 'Lawn', 'Neoprene', 'Organza', 'Oxford', 'Satin', 'Sateen', 'Shantung', 'Tricot', 'Tulle', 'Twill', 'Velvet']
+const fiberdatabase = ['Cotton', 'Polyester', 'Rayon', 'Linen', 'Acetate', 'Acrylic', 'Nylon', 'Silk', 'Wool', 'Polyester/Cotton', 'Lycra/Cotton', 'Wool/Cotton', 
+'Linen/Cotton', 'Rayon/Cotton', 'Nylon/Wool', 'Polyester/Wool', 'Silk/Wool', 'Silk/Linen', 'Silk/Rayon']
 
 export default function NewFabricScreen({ navigation, route }) {
 
@@ -21,7 +23,8 @@ export default function NewFabricScreen({ navigation, route }) {
   const [fabric_fiber, setFiber] = useState(route.params ? (route.params.fiber) : '')
   const [fabric_weight, setWeight] = useState(route.params ? (route.params.weight) : '')
   const [fabric_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
-  const [filtered, setFiltered] = useState([]); //Autocomplete filtered data
+  const [filtered_types, setFilteredTypes] = useState([]); 
+  const [filtered_fibers, setFilteredFibers] = useState([]);
 
   /* Error message overlay */
   const [visible, setVisible] = useState(false);
@@ -31,11 +34,21 @@ export default function NewFabricScreen({ navigation, route }) {
   const findType = (query) => {
     if (query) {
       const regex = new RegExp(`${query.trim()}`, 'i');
-      setFiltered(
+      setFilteredTypes(
           typedatabase.filter((type) => type.search(regex) >= 0)
       );
     } else 
-      setFiltered([]);
+    setFilteredTypes([]);
+  };
+
+  const findFiber = (query) => {
+    if (query) {
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      setFilteredFibers(
+          fiberdatabase.filter((type) => type.search(regex) >= 0)
+      );
+    } else 
+    setFilteredFibers([]);
   };
 
   const createFabric = (fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight) => (
@@ -71,7 +84,7 @@ export default function NewFabricScreen({ navigation, route }) {
           <Picker
             selectedValue={fabric_yard_frac} style={styles.yarddropdown} mode='dropdown'
             onValueChange={(itemValue) => setYardPicker(itemValue)}>
-          <Picker.Item label="0" value="0"/>
+          <Picker.Item label="" value=""/>
           <Picker.Item label="1/8" value="1/8" />
           <Picker.Item label="1/4" value="1/4" />
           <Picker.Item label="3/8" value="3/8" />
@@ -82,7 +95,22 @@ export default function NewFabricScreen({ navigation, route }) {
           </Picker>
         </View>
         <Text style={styles.paramtext}>Fiber</Text>
-        <Input containerStyle={styles.input} maxLength={30} value={fabric_fiber} onChangeText={(value) => setFiber(value)}/>
+        <View style={styles.flexrow}>
+        <Autocomplete
+            containerStyle={styles.containerAC} inputContainerStyle={styles.inputAC}
+            autoCapitalize='sentences' autoCorrect={false} data={filtered_fibers} defaultValue={fabric_fiber} 
+            keyExtractor={(index) => index.toString()} onChangeText={(text) => {findFiber(text); setFiber(text)}}
+            renderItem={({item, index}) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setFiber(item);
+                  setFilteredFibers([]);
+                }}>
+                <Text key={index.toString()}>{item}</Text>
+              </TouchableOpacity>
+            )}
+          /></View>
+
         <View style={styles.flexrow}>
           <Text style={styles.paramtext}>Weave/Type</Text>
           <Text style={[styles.paramtext, {paddingLeft:85}]}>Weight</Text>
@@ -90,14 +118,14 @@ export default function NewFabricScreen({ navigation, route }) {
 
         <View style={styles.flexrow}>
           <Autocomplete
-            containerStyle={styles.accontainer} inputContainerStyle={styles.acinput}
-            autoCapitalize='sentences' autoCorrect={false} data={filtered} defaultValue={fabric_type} 
+            containerStyle={styles.containerAC} inputContainerStyle={styles.inputAC}
+            autoCapitalize='sentences' autoCorrect={false} data={filtered_types} defaultValue={fabric_type} 
             keyExtractor={(index) => index.toString()} onChangeText={(text) => {findType(text); setType(text)}}
             renderItem={({item, index}) => (
               <TouchableOpacity
                 onPress={() => {
                   setType(item);
-                  setFiltered([]);
+                  setFilteredTypes([]);
                 }}>
                 <Text key={index.toString()}>{item}</Text>
               </TouchableOpacity>
@@ -135,10 +163,12 @@ const styles = StyleSheet.create({
   temp:{
     backgroundColor: 'blue',
   },
-  accontainer:{
-    width: 180,
+  containerAC:{
+    paddingBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
-  acinput:{
+  inputAC:{
     borderBottomWidth: 1,
     borderColor: '#86939e',
     borderWidth: 0,

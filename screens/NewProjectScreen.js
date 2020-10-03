@@ -1,29 +1,35 @@
 import React, { useState, useContext, useReducer } from 'react';
-import { Image, View, StyleSheet, Picker } from 'react-native';
+import { Image, Text, View, StyleSheet, Picker } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
-import { Input, Icon, Button } from 'react-native-elements';
+import { Input, Icon, Button, Overlay } from 'react-native-elements';
 import { types } from './ProjectListScreen'
 import NotionList from '../components/NotionList'
 import { reducer, initialState, actionCreators } from '../components/NotionList'
-//import MyContext from '../navigation/ProjectNav'
 
 const randomId = () => Math.random().toString()
 
 export default function NewProjectScreen({ navigation, route }) {
 
-  const createProject = (project_title, pattern_name, notionlist) => (
-    { id: randomId(), projectName: project_title, patternName: pattern_name, notions: notionlist, imgreq: [require('../assets/line.png')]})
-    const editedProject = (project_title, pattern_name, notionlist) => (
-      { id: route.params.id, projectName: project_title, patternName: pattern_name, notions: notionlist, imgreq: route.params.imgreq})
-
-  //const data = React.useContext(MyContext);
 
   const [state, dispatch] = useReducer(reducer, (route.params ? ({list: route.params.notions}) : initialState))
   const [project_title, setName] = useState(route.params ? (route.params.projectName) : '')
   const [pattern_name, setPattern] = useState(route.params ? (route.params.patternName) : '')
+  const [project_yardage, setYardage] = useState(route.params ? (route.params.yardage) : '')
+  const [proj_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
   const [notion, setNotion] = useState('')
   //const [selected_fabric, setSelectedFabric] = useState('');
+
+  /* Error message overlay */
+  const [visible, setVisible] = useState(false);
+  const toggleOverlay = () => {setVisible(!visible);};
+
+  const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac) => (
+    { id: randomId(), projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
+      notions: notionlist, imgreq: [require('../assets/line.png')]})
+  const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac) => (
+    { id: route.params.id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
+      notions: notionlist, imgreq: route.params.imgreq})
 
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -34,7 +40,6 @@ export default function NewProjectScreen({ navigation, route }) {
     return <AppLoading />;
   }
   
-  //console.log(data)
   //let fabriclist = []
    // fabriclist = fabricInventory.map((fabric) => {
     //  console.log(fabric.name)
@@ -50,26 +55,59 @@ export default function NewProjectScreen({ navigation, route }) {
     <View style={styles.container}>
 
       <View style={styles.inputcontainer}>
-      <Input placeholder='Project Title' value={project_title} onChangeText={(value) => setName(value)}/>
-      <Input placeholder='Pattern Name' value={pattern_name} onChangeText={(value) => setPattern(value)}/>
-      <Input placeholder={'Add a notion and hit enter'} value={notion} onChangeText={(value) => setNotion(value)}
+      <Text style={styles.paramtext}>Title</Text>
+      <Input containerStyle={styles.input} value={project_title} onChangeText={(value) => setName(value)}/>
+      <Text style={styles.paramtext}>Pattern Name</Text>
+      <Input containerStyle={styles.input} value={pattern_name} onChangeText={(value) => setPattern(value)}/>
+      <View style={styles.flexrow}>
+        <Text style={styles.paramtext}>Fabric Yards</Text>
+        <Text style={[styles.paramtext, {paddingLeft:40}]}>Fractions</Text>
+      </View>
+      <View style={styles.flexrow}>
+          <Input containerStyle={[styles.input, {width:128}]} maxLength={4} keyboardType="number-pad" 
+          value={project_yardage.toString()} onChangeText={(value) => setYardage(value)}/>
+          <Picker
+            selectedValue={proj_yard_frac} style={styles.yarddropdown} mode='dropdown'
+            onValueChange={(itemValue) => setYardPicker(itemValue)}>
+          <Picker.Item label="" value=""/>
+          <Picker.Item label="1/8" value="1/8" />
+          <Picker.Item label="1/4" value="1/4" />
+          <Picker.Item label="3/8" value="3/8" />
+          <Picker.Item label="1/2" value="1/2" />
+          <Picker.Item label="5/8" value="5/8" />
+          <Picker.Item label="3/4" value="3/4" />
+          <Picker.Item label="7/8" value="7/8" />
+          </Picker>
+        </View>
+      <Text style={styles.paramtext}>Fabric</Text>
+      <Text>To do!</Text>
+      <Text style={styles.paramtext}>Notions</Text>
+      <Input style={styles.notioninput} placeholder={'Add a notion and hit enter'} value={notion} onChangeText={(value) => setNotion(value)}
       onSubmitEditing={() => {
         if (!notion) return 
         dispatch(actionCreators.add(notion))
         setNotion('')}}/>
       <NotionList items={state.list} onPressItem={(id) => dispatch(actionCreators.delete(id))}/>
-
-      <Button icon={ <Icon type='ionicon' name="ios-add-circle"/>} title="Save"
+      <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
+            type="outline" title={route.params ? "Save Project" : "Add Project"} containerStyle={styles.button}
       onPress={() => {
-        if (!route.params){
-          navigation.navigate('ProjectListScreen', {action_type: types.ADD, projectobj: createProject(project_title, pattern_name, state.list)}); 
+        if (project_title === '' && pattern_name === '')
+          toggleOverlay()
+        else if (!route.params){
+          navigation.navigate('ProjectListScreen', {action_type: types.ADD, 
+            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac)}); 
         }
         else {
-        navigation.navigate('ProjectListScreen', {action_type: types.MODIFY, projectobj: editedProject(project_title, pattern_name, state.list)}); 
+        navigation.navigate('ProjectListScreen', {action_type: types.MODIFY, 
+          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac)}); 
         }
       }}
       />
       </View>
+
+      <Overlay isVisible={visible} onBackdropPress={toggleOverlay} overlayStyle={{padding: 10, margin: 10,}}>
+        <Text style={styles.paramtext}>Please give this project a title or pattern name!</Text>
+      </Overlay>
 
     </View>
   )
@@ -79,8 +117,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,   
   },
+  flexrow:{
+    flexDirection: 'row',
+  },
   inputcontainer: {
-    height: 150,
+    padding: 10,
+  },
+  notioninput: {
+    borderWidth: 0,
+    fontSize: 15,
+  },
+  input:{
+    fontFamily: 'Proxima',
+  },
+  paramtext:{
+    fontFamily: 'Proxima',
+    fontSize: 18,
+    paddingLeft: 10,
+  },
+  button:{
+    padding: 5,
+  },
+  yarddropdown:{
+    width: 120,
   },
   image: {
     height: undefined,
