@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { FlatList, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { useFonts } from 'expo-font';
+import { AppLoading } from 'expo';
+import { FlatList, Text, View, StyleSheet } from 'react-native';
+import { Icon } from 'react-native-elements';
 
 export const initialState = {
   list: [
@@ -36,15 +39,24 @@ export function reducer(state, action) {
 
 export default function NotionList({ items, onPressItem }){
 
+  let [fontsLoaded] = useFonts({
+    'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Proxima': require('../assets/fonts/ProximaNova-Regular.otf'),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
   return (
-    <View>
+    <View styles={styles.container}>
     <FlatList
-      data={items}
+      data={items} style={styles.flatlist} showsVerticalScrollIndicator={true} persistentScrollbar={true}
       renderItem={( { item }) => {
         return (
-        <TouchableOpacity style={styles.listcontainer} onPress={() => onPressItem(item.id)}>
+        <View style={styles.listcontainer}>
         <Text key={item.id} style={styles.row}>{item.name}</Text>
-        </TouchableOpacity>
+        <Icon type='ionicon' name="ios-close" containerStyle={styles.icon} color='black' size={30} onPress={() => onPressItem(item.id)}/>
+        </View>
       )}}
       keyExtractor={(item) => item.id}
     />
@@ -54,11 +66,23 @@ export default function NotionList({ items, onPressItem }){
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,   
+    flex : 1, 
+  },
+  flatlist:{
+    height: 150,
+    flexGrow: 0,
+    borderColor: 'white',
+  },
+  icon:{
+    padding: 2,
   },
   listcontainer: {
-    padding: 15,
-    marginBottom: 5,
-    backgroundColor: 'powderblue',
+    marginRight: 5,
+    flexDirection: 'row',
+  },
+  row: {
+    fontFamily: 'Proxima',
+    fontSize: 14,
+    padding: 10,
   }
 });

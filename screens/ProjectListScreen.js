@@ -60,7 +60,7 @@ export default function ProjectListScreen({ navigation, route }) {
         }
         return (
         <TouchableOpacity style={styles.listcontainer} onPress={() => { navigation.push('ProjectScreen', item)}}>
-        <Text style={styles.row}>{item.projectName + " | " + item.patternName}</Text>
+          <Text style={styles.projectname}><Text style={{fontWeight: 'bold'}}>{item.projectName}</Text>   {item.patternName}</Text>
         <View style={styles.imagerow}>
         {imglist}
         </View>
@@ -69,7 +69,7 @@ export default function ProjectListScreen({ navigation, route }) {
       keyExtractor={(item) => item.id}
       />
 
-      <Icon type='ionicon' name='ios-add-circle-outline' color='powderblue' size={50}
+      <Icon type='ionicon' name='ios-add-circle' color='#4f99e3' size={75} containerStyle={styles.addicon}
       onPress={() => {
         navigation.push('NewProjectScreen');
       }}/>
@@ -82,8 +82,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,   
   },
+  flexrow: {
+    flexDirection: 'row',
+  },
   listcontainer: {
-    height: 150,
+    height: 170,
+  },
+  addicon: {
+    padding: 10,
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
   },
   imagerow: {
     flexDirection: 'row',
@@ -91,15 +100,13 @@ const styles = StyleSheet.create({
   imgbox:{
     height: 150,
   },
-  addicon: {
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  row: {
-    padding: 15,
-    marginBottom: 5,
-    backgroundColor: 'powderblue',
+  projectname: {
+    paddingLeft: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
+    backgroundColor: '#e9f2f5',
     fontFamily: 'Proxima',
+    fontSize: 15,
   },
   separator: {
     marginVertical: 30,
