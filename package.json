@@ -29,10 +29,12 @@
     "react-native-reanimated": "^1.9.0",
     "react-native-safe-area-context": "^3.0.7",
     "react-native-screens": "^2.9.0",
+    "react-native-sqlite-storage": "^5.0.0",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.11.7",
     "react-native-webview": "^10.9.0",
-    "react-redux": "^7.2.1"
+    "react-redux": "^7.2.1",
+    "expo-sqlite": "~8.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
