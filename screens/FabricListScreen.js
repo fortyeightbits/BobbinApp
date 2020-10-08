@@ -3,6 +3,7 @@ import { FlatList, Image, Text, View, StyleSheet, TouchableOpacity, Dimensions }
 import { Icon } from 'react-native-elements';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
+import { bobbinDb} from './HomeScreen'
 
 export const fabricInitialState = {
   inventory: [
@@ -23,8 +24,27 @@ const actionCreators = {
 export function reducer(state, action) {
   switch (action.type) {
     case types.ADD: {
-      if (state.inventory.every((item) => item.id !== action.payload.id))
-      return { ...state, inventory: [...state.inventory, action.payload] }
+      if (state.inventory.every((item) => item.id !== action.payload.id)) {
+        const fabricobj = action.payload;
+        bobbinDb.transaction(function (tx) {
+          tx.executeSql(
+            'INSERT INTO fabricTable (\
+              fabric_name,\
+              fabric_width,\
+              fabric_yardage,\
+              fabric_yard_frac,\
+              fabric_type,\
+              fabric_fiber,\
+              fabric_weight) \
+            VALUES (?,?,?,?,?,?,?)',
+            [fabricobj.name, fabricobj.width, fabricobj.yardage, fabricobj.yardfrac, fabricobj.type, fabricobj.fiber, fabricobj.weight],
+            (tx, results) => {
+                console.log('Results', results.rowsAffected);
+              }
+          );
+        });
+        return { ...state, inventory: [...state.inventory, action.payload] }
+      }
     }
     case types.MODIFY:
       return { ...state, inventory: state.inventory.map((item) => item.id === action.payload.id ? action.payload : item)}

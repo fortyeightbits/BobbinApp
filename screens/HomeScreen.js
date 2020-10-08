@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation, route}) {
         fabric_yardage INTEGER NOT NULL, \
         fabric_yard_frac VARCHAR(64) NOT NULL, \
         fabric_type VARCHAR(64) NOT NULL, \
-        fabric_fibre VARCHAR(64) NOT NULL, \
+        fabric_fiber VARCHAR(64) NOT NULL, \
         fabric_weight INTEGER NOT NULL, \
         )',
       [],
