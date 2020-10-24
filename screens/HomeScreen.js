@@ -16,31 +16,28 @@ export default function HomeScreen({ navigation, route}) {
   if (!fontsLoaded) {
     return <AppLoading />;
   }
-  
+
+  bobbinDb.transaction((tx) => {
+    tx.executeSql(
+      'DROP TABLE IF EXISTS fabricTable',[]
+    )
+  })
+
   // Create Fabrics table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS fabricTable (        \
-        fabric_id INTEGER PRIMARY KEY AUTOINCREMENT,   \
+        fabric_id VARCHAR(64) UNIQUE,   \
         fabric_name VARCHAR(64) UNIQUE, \
-        fabric_width INTEGER NOT NULL, \
-        fabric_yardage INTEGER NOT NULL, \
+        fabric_width VARCHAR(64) NOT NULL, \
+        fabric_yardage VARCHAR(64) NOT NULL, \
         fabric_yard_frac VARCHAR(64) NOT NULL, \
         fabric_type VARCHAR(64) NOT NULL, \
         fabric_fiber VARCHAR(64) NOT NULL, \
-        fabric_weight INTEGER NOT NULL, \
+        fabric_weight VARCHAR(64) NOT NULL, \
+        fabric_img VARCHAR(64) NOT NULL \
         )',
-      [],
-      // (tx, results) => {
-      //   var len = results.rows.length;
-      //   if (len > 0) {
-      //     let res = results.rows.item(0);
-      //     updateAllStates(res.user_name, res.user_contact, res.user_address);
-      //   } else {
-      //     alert('No user found');
-      //     updateAllStates('', '', '');
-      //   }
-      // }
+      []
     );
   });
   
@@ -48,9 +45,9 @@ export default function HomeScreen({ navigation, route}) {
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS notionTable (        \
-        notion_id INTEGER PRIMARY KEY AUTOINCREMENT,   \
+        notion_id VARCHAR(64) UNIQUE ,  \
         notion_name VARCHAR(64) UNIQUE, \
-        notion_quantity INTEGER NOT NULL, \
+        notion_quantity VARCHAR(64) NOT NULL, \
         )',
       [],
     );
@@ -60,10 +57,10 @@ export default function HomeScreen({ navigation, route}) {
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS projectTable (        \
-        project_id INTEGER PRIMARY KEY AUTOINCREMENT,   \
+        project_id VARCHAR(64) UNIQUE,   \
         pattern_name VARCHAR(64) NOT NULL, \
         project_title VARCHAR(64) UNIQUE, \
-        project_yards INTEGER NOT NULL\
+        project_yards VARCHAR(64) NOT NULL, \
         )',
       [],
     );

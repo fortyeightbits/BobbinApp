@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Image, Text, View, StyleSheet, Picker, TouchableOpacity } from 'react-native';
+import { Image, Text, View, StyleSheet, Picker, TouchableOpacity, Dimensions } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import { Input, Icon, Button, Overlay } from 'react-native-elements';
 import { types } from './FabricListScreen'
 import Autocomplete from 'react-native-autocomplete-input';
+import * as ImagePicker from 'expo-image-picker';
 
 const randomId = () => Math.random().toString()
 const typedatabase = ['Batik', 'Broadcloth', 'Canvas', 'Chiffon', 'Quilting cotton', 'Flannel', 'Fleece', 'Jersey', 'Lawn', 'Linen', 'Poplin', 'Crepe',
@@ -14,6 +15,20 @@ const fiberdatabase = ['Cotton', 'Polyester', 'Rayon', 'Linen', 'Acetate', 'Acry
 'Linen/Cotton', 'Rayon/Cotton', 'Nylon/Wool', 'Polyester/Wool', 'Silk/Wool', 'Silk/Linen', 'Silk/Rayon']
 
 export default function NewFabricScreen({ navigation, route }) {
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 
   /* All the hooks but no pan */
   const [fabric_name, setName] = useState(route.params ? (route.params.name) : '')
@@ -25,6 +40,7 @@ export default function NewFabricScreen({ navigation, route }) {
   const [fabric_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
   const [filtered_types, setFilteredTypes] = useState([]); 
   const [filtered_fibers, setFilteredFibers] = useState([]);
+  const [fabric_img, setImage] = useState(route.params ? (route.params.image) : null);
 
   /* Error message overlay */
   const [visible, setVisible] = useState(false);
@@ -51,12 +67,12 @@ export default function NewFabricScreen({ navigation, route }) {
     setFilteredFibers([]);
   };
 
-  const createFabric = (fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight) => (
+  const createFabric = (fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight, fabric_img) => (
     { id: randomId(), name: fabric_name, width: fabric_width, yardage: fabric_yardage, yardfrac: fabric_yard_frac,
-  type: fabric_type, fiber: fabric_fiber, weight: fabric_weight, imgreq: require('../assets/sloth.jpg')})
-  const editedFabric = (fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight) => (
-    { id: route.params.id, name: fabric_name, width: fabric_width, yardage: fabric_yardage, fabric_yardage, yardfrac: fabric_yard_frac,
-  type: fabric_type, fiber: fabric_fiber, weight: fabric_weight, imgreq: route.params.imgreq})
+  type: fabric_type, fiber: fabric_fiber, weight: fabric_weight, image: fabric_img})
+  const editedFabric = (fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight, fabric_img) => (
+    { id: route.params.id, name: fabric_name, width: fabric_width, yardage: fabric_yardage, yardfrac: fabric_yard_frac,
+  type: fabric_type, fiber: fabric_fiber, weight: fabric_weight, image: fabric_img})
 
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -133,6 +149,12 @@ export default function NewFabricScreen({ navigation, route }) {
           />
           <Input containerStyle={[styles.input, {width:185}]} maxLength={15} value={fabric_weight} onChangeText={(value) => setWeight(value)}/> 
         </View>
+
+        <View style={styles.upload}>        
+          {fabric_img && <Image source={{ uri: fabric_img }} style={{ height: 117}}/>}
+          <Button title={fabric_img ? "Edit Image" : "Add Image"} onPress={pickImage} containerStyle={styles.uploadbutton}/>
+        </View>
+
         <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
                 type="outline" title={route.params ? "Save Fabric" : "Add Fabric"} containerStyle={styles.button}
         onPress={() => {
@@ -140,10 +162,12 @@ export default function NewFabricScreen({ navigation, route }) {
             toggleOverlay()
           else if (!route.params)
             navigation.navigate('FabricListScreen', {action_type: types.ADD, 
-              fabricobj: createFabric(fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight)}); 
+              fabricobj: createFabric(fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight, 
+                fabric_img)}); 
           else
             navigation.navigate('FabricListScreen', {action_type: types.MODIFY, 
-              fabricobj: editedFabric(fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight)}); 
+              fabricobj: editedFabric(fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight,
+                fabric_img)}); 
         }}
         />
       </View>
@@ -160,8 +184,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,   
   },
-  temp:{
-    backgroundColor: 'blue',
+  uploadbutton:{
+    padding: 10,
+    marginLeft: 30,
+    marginRight: 30,
+  },
+  upload:{
+    padding: 10,
+    margin: 5,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderRadius: 1,
+    borderColor: '#4f99e3',
   },
   containerAC:{
     paddingBottom: 10,

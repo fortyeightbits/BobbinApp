@@ -3,6 +3,7 @@ import { Image, Text, View, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import { Icon, Button } from 'react-native-elements';
+import { types } from './FabricListScreen'
 
 export default function FabricScreen({ navigation, route }) {
 
@@ -17,7 +18,7 @@ export default function FabricScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Image resizeMode='cover' style={styles.image} source={route.params.imgreq}/>
+      <Image resizeMode='cover' style={styles.image} source={{ uri: route.params.image }}/>
       <View style={styles.info}>
         <View style={styles.flexrow}>
           <Text style={styles.paramtext}>Name   </Text>
@@ -59,6 +60,12 @@ export default function FabricScreen({ navigation, route }) {
           navigation.push('NewFabricScreen', route.params); 
         }}
         />
+        <Button icon={ <Icon type='ionicon' name="ios-trash" containerStyle={styles.button} color='#4f99e3'/>} 
+          type="outline" title="Delete" containerStyle={styles.button}
+        onPress={() => {
+          navigation.navigate('FabricListScreen', {action_type: types.DELETE, fabricid: route.params.id}); 
+        }}
+        />        
       </View>
     </View>
   )
