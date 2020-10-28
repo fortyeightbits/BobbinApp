@@ -5,10 +5,6 @@ import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import { bobbinDb} from './HomeScreen'
 
-let fabricInitialState = {
-  inventory: []
-}
-
 export const types = {
   ADD: 'ADD',
   MODIFY: 'MODIFY',
@@ -72,11 +68,15 @@ export function reducer(state, action) {
 
 export default function FabricListScreen({ navigation, route }) {
 
-  async function fabricInit(){
+  function fabricInit(temp){
 
     const createFabric = (fabric_id, fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight, fabric_img) => (
       { id: fabric_id, name: fabric_name, width: fabric_width, yardage: fabric_yardage, yardfrac: fabric_yard_frac,
     type: fabric_type, fiber: fabric_fiber, weight: fabric_weight, image: fabric_img})
+
+    let fabricInitialState = {
+      inventory: []
+    }
 
     bobbinDb.transaction(function (tx) {
       tx.executeSql(
@@ -88,9 +88,9 @@ export default function FabricListScreen({ navigation, route }) {
           for (let i = 0; i < results.rows.length; i++)
           {
             let item = results.rows.item(i);
-            if (state.inventory.every((fabric) => fabric.id !== item.fabric_id)) {
+            if (fabricInitialState.inventory.every((fabric) => fabric.id !== item.fabric_id)) {
               console.log("pushing")
-              state.inventory.push(createFabric(item.fabric_id, item.fabric_name, item.fabric_width, item.fabric_yardage, item.fabric_yard_frac, 
+              fabricInitialState.inventory.push(createFabric(item.fabric_id, item.fabric_name, item.fabric_width, item.fabric_yardage, item.fabric_yard_frac, 
                 item.fabric_type, item.fabric_fiber, item.fabric_weight, item.fabric_img))
             }
           }
@@ -98,9 +98,10 @@ export default function FabricListScreen({ navigation, route }) {
         }
       );
     })
+    return fabricInitialState;
   }
 
-  const [state, dispatch] = useReducer(reducer, fabricInitialState)
+  const [state, dispatch] = useReducer(reducer, 0, fabricInit)
   const [ready, setReady] = useState(false)
 
   let [fontsLoaded] = useFonts({
@@ -122,10 +123,6 @@ export default function FabricListScreen({ navigation, route }) {
       }
     }
   }, [route.params]);
-
-  useEffect(() => {
-    fabricInit();
-  }, []);
 
   if (!fontsLoaded) {
     return <AppLoading />;
