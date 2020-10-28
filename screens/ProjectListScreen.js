@@ -1,38 +1,105 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import { FlatList, Image, Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Icon } from 'react-native-elements';
-
-export const initialState = {
-  projectlist: [
-    { id: '0', projectName: 'The Cottagecore Dress', patternName: 'McCall\'s M7974', notions: [],
-      imgreq: [require('../assets/line.png'), require('../assets/green.png') ] },
-  ],
-}
+import { useFonts } from 'expo-font';
+import { AppLoading } from 'expo';
+import { bobbinDb } from './HomeScreen'
 
 export const types = {
   ADD: 'ADD',
   MODIFY: 'MODIFY',
+  DELETE: 'DELETE',
 }
 
 const actionCreators = {
-    add: (x) => ({type: types.ADD, payload: x}),
-    modify: (x) => ({type: types.MODIFY, payload: x}),
+    add: (proj) => ({type: types.ADD, payload: proj}),
+    modify: (proj) => ({type: types.MODIFY, payload: proj}),
+    delete: (id) => ({type: types.DELETE, payload: id}),
 }
 
 export function reducer(state, action) {
   switch (action.type) {
     case types.ADD:{
-      if (state.projectlist.every((item) => item.id !== action.payload.id))
-      return { ...state, projectlist: [...state.projectlist, action.payload] }
+      if (state.projectlist.every((item) => item.id !== action.payload.id)){
+        console.log("Adding")
+        const projobj = action.payload;
+        bobbinDb.transaction(function (tx) {
+          tx.executeSql( //TODO pictures
+            'INSERT INTO projectTable (\
+              project_id, \
+              pattern_name,\
+              project_title,\
+              project_yards,\
+              project_yard_frac, \
+              project_img) \
+            VALUES (?,?,?,?,?,?)',
+            [projobj.id, projobj.projectName, projobj.patternName, projobj.yardage, projobj.yardfrac, projobj.image],
+            (tx, results) => {console.log("Added to table")},
+            (tx, error) => {console.log(error);},            
+          );
+        });
+        return { ...state, projectlist: [...state.projectlist, action.payload] }
+      }
     }
-    case types.MODIFY:
+    case types.MODIFY:{
       return { ...state, projectlist: state.projectlist.map((item) => item.id === action.payload.id ? action.payload : item)}
+    }
+    case types.DELETE: {
+      bobbinDb.transaction(function (tx) {
+        tx.executeSql(
+          'DELETE FROM projectTable WHERE project_id = ?',
+          [action.payload],
+          (tx, results) => {
+          }
+        );
+      });
+      return {...state, projectlist: state.projectlist.filter((item) => item.id !== action.payload)}
+    }
   }
 }
 
 export default function ProjectListScreen({ navigation, route }) {
 
-  const [state, dispatch] = useReducer(reducer, initialState)
+  function projectInit(arg){
+
+    const createProject = (project_id, project_title, pattern_name, project_yardage, proj_yard_frac, project_img) => (
+      { id: project_id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac, image: project_img
+    })
+
+    let projectInitialState = {
+      projectlist: []
+    }
+
+    bobbinDb.transaction(function (tx) {
+      tx.executeSql(
+        'SELECT * FROM projectTable',
+        [],
+        (tx, results) => {
+          console.log('projectInit results');
+          console.log(results)
+          for (let i = 0; i < results.rows.length; i++)
+          {
+            let item = results.rows.item(i);
+            if (projectInitialState.projectlist.every((proj) => proj.id !== item.project_id)) {
+              console.log("pushing")
+              projectInitialState.projectlist.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_yardage, 
+                item.proj_yard_frac, item.project_img))
+            }
+          }
+          setReady(true);
+        },
+        (tx, error) => console.log(error)
+      );
+    })
+    return projectInitialState;
+  }
+
+  const [state, dispatch] = useReducer(reducer, 0, projectInit)
+  const [ready, setReady] = useState(false)
+
+  let [fontsLoaded] = useFonts({
+    'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Proxima': require('../assets/fonts/ProximaNova-Regular.otf'),});
 
   useEffect(() => {
     if (route.params) {
@@ -41,15 +108,29 @@ export default function ProjectListScreen({ navigation, route }) {
           dispatch(actionCreators.add(route.params.projectobj));
         case types.MODIFY: 
           dispatch(actionCreators.modify(route.params.projectobj));
+        case types.DELETE:
+          dispatch(actionCreators.delete(route.params.projectid));
+          break;          
       }
     }
   }, [route.params]);
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
+  if(!ready)
+  {
+    console.log("loading")
+    return null;
+  }
 
   return (
     <View style={styles.container}>
       <FlatList
       data={state.projectlist}
       renderItem = {({item}) => {
+
         let imglist = []
         if(item.imgreq) {
            imglist = item.imgreq.map((img, index) => {

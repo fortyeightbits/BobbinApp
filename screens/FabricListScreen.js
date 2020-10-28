@@ -3,7 +3,7 @@ import { FlatList, Image, Text, View, StyleSheet, TouchableOpacity, Dimensions }
 import { Icon } from 'react-native-elements';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
-import { bobbinDb} from './HomeScreen'
+import { bobbinDb } from './HomeScreen'
 
 export const types = {
   ADD: 'ADD',
@@ -38,9 +38,8 @@ export function reducer(state, action) {
             VALUES (?,?,?,?,?,?,?,?,?)',
             [fabricobj.id, fabricobj.name, fabricobj.width, fabricobj.yardage, fabricobj.yardfrac, 
              fabricobj.type, fabricobj.fiber, fabricobj.weight, fabricobj.image],
-            (tx, results) => {
-                console.log('Added ', results.rowsAffected);
-            },
+            (tx, results) => {console.log("Added to table")},
+            (tx, error) => {console.log(error);},            
           );
         });
         return { ...state, inventory: [...state.inventory, action.payload] }
@@ -56,11 +55,9 @@ export function reducer(state, action) {
           'DELETE FROM fabricTable WHERE fabric_id = ?',
           [action.payload],
           (tx, results) => {
-              console.log('Deleted');
           }
         );
       });
-      console.log("delete inventory")
       return {...state, inventory: state.inventory.filter((item) => item.id !== action.payload)}
     }
   }
@@ -68,7 +65,7 @@ export function reducer(state, action) {
 
 export default function FabricListScreen({ navigation, route }) {
 
-  function fabricInit(temp){
+  function fabricInit(arg){
 
     const createFabric = (fabric_id, fabric_name, fabric_width, fabric_yardage, fabric_yard_frac, fabric_type, fabric_fiber, fabric_weight, fabric_img) => (
       { id: fabric_id, name: fabric_name, width: fabric_width, yardage: fabric_yardage, yardfrac: fabric_yard_frac,
@@ -95,7 +92,8 @@ export default function FabricListScreen({ navigation, route }) {
             }
           }
           setReady(true);
-        }
+        },
+        (tx, error) => console.log(error)
       );
     })
     return fabricInitialState;
@@ -142,14 +140,14 @@ export default function FabricListScreen({ navigation, route }) {
       data={state.inventory}
       renderItem={( { item }) => {
         return (
-        <TouchableOpacity style={styles.listcontainer} onPress={() => { navigation.push('FabricScreen', item)}}>
+        <TouchableOpacity onPress={() => { navigation.push('FabricScreen', item)}}>
         <Text style={styles.fabricdes}>
           <Text style={styles.fabricname}>{item.name}</Text>
           {"  " + item.yardage + " " + (item.yardfrac ? item.yardfrac + " " : "") + ((item.yardage || item.yardfrac) ? "yards " : "") 
           + ((item.fiber || item.type) && (item.yardage || item.yardfrac) ? "of " : "") 
           + ((item.fiber || item.type) ? (item.fiber + " " + item.type) : "")}
         </Text>
-        <Image resizeMode='cover' style={styles.image} source={{ uri: item.image }} />
+        {item.image && <Image resizeMode='cover' style={styles.image} source={{ uri: item.image }}/>}
         </TouchableOpacity>
       )}}
       keyExtractor={(item) => item.id.toString()}
@@ -165,9 +163,6 @@ export default function FabricListScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,   
-  },
-  listcontainer: {
-    height: 170,
   },
   addicon: {
     padding: 10,

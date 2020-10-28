@@ -2,6 +2,7 @@ import React, { useState, useContext, useReducer } from 'react';
 import { Image, Text, View, StyleSheet, Picker } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
+import * as ImagePicker from 'expo-image-picker';
 import { Input, Icon, Button, Overlay } from 'react-native-elements';
 import { types } from './ProjectListScreen'
 import NotionList from '../components/NotionList'
@@ -11,12 +12,25 @@ const randomId = () => Math.random().toString()
 
 export default function NewProjectScreen({ navigation, route }) {
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 
   const [state, dispatch] = useReducer(reducer, (route.params ? ({list: route.params.notions}) : initialState))
   const [project_title, setName] = useState(route.params ? (route.params.projectName) : '')
   const [pattern_name, setPattern] = useState(route.params ? (route.params.patternName) : '')
   const [project_yardage, setYardage] = useState(route.params ? (route.params.yardage) : '')
   const [proj_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
+  const [project_img, setImage] = useState(route.params ? (route.params.image) : null); //TODO multiple
   const [notion, setNotion] = useState('')
   //const [selected_fabric, setSelectedFabric] = useState('');
 
@@ -26,10 +40,10 @@ export default function NewProjectScreen({ navigation, route }) {
 
   const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac) => (
     { id: randomId(), projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
-      notions: notionlist, imgreq: [require('../assets/line.png')]})
+      notions: notionlist, image: project_img})
   const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac) => (
     { id: route.params.id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
-      notions: notionlist, imgreq: route.params.imgreq})
+      notions: notionlist, iimage: project_img})
 
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -88,6 +102,12 @@ export default function NewProjectScreen({ navigation, route }) {
         dispatch(actionCreators.add(notion))
         setNotion('')}}/>
       <NotionList items={state.list} onPressItem={(id) => dispatch(actionCreators.delete(id))}/>
+
+      <View style={styles.upload}>        
+          {project_img && <Image source={{ uri: project_img }} style={{ height: 10}}/>}
+          <Button title={project_img ? "Edit Image" : "Add Image"} onPress={pickImage} containerStyle={styles.uploadbutton}/>
+        </View>
+
       <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
             type="outline" title={route.params ? "Save Project" : "Add Project"} containerStyle={styles.button}
       onPress={() => {
@@ -95,11 +115,11 @@ export default function NewProjectScreen({ navigation, route }) {
           toggleOverlay()
         else if (!route.params){
           navigation.navigate('ProjectListScreen', {action_type: types.ADD, 
-            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac)}); 
+            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, project_img)}); 
         }
         else {
         navigation.navigate('ProjectListScreen', {action_type: types.MODIFY, 
-          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac)}); 
+          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, project_img)}); 
         }
       }}
       />
@@ -116,6 +136,19 @@ export default function NewProjectScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,   
+  },
+  uploadbutton:{
+    padding: 10,
+    marginLeft: 30,
+    marginRight: 30,
+  },
+  upload:{
+    padding: 10,
+    margin: 5,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderRadius: 1,
+    borderColor: '#4f99e3',
   },
   flexrow:{
     flexDirection: 'row',
