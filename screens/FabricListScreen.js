@@ -47,7 +47,30 @@ export function reducer(state, action) {
       }
     }
     case types.MODIFY: {
-      //TODO
+      console.log("Modifying")
+      const fabricobj = action.payload;
+      bobbinDb.transaction(function (tx) {
+        tx.executeSql(
+          'UPDATE fabricTable\
+            SET fabric_name=?,\
+             fabric_width=?,\
+             fabric_yardage=?,\
+             fabric_yard_frac=?,\
+             fabric_type=?,\
+             fabric_fiber=?,\
+             fabric_weight=?, \
+             fabric_img=? \
+           WHERE fabric_id=?',
+          [fabricobj.name, fabricobj.width, fabricobj.yardage, fabricobj.yardfrac, 
+           fabricobj.type, fabricobj.fiber, fabricobj.weight, fabricobj.image, fabricobj.id],
+          (tx, results) => {
+              console.log('Modified ', results.rowsAffected);
+          },
+          (tx, error) => {
+              console.log('Error ', error);
+          }
+        );
+      });
       return { ...state, inventory: state.inventory.map((item) => item.id === action.payload.id ? action.payload : item)}
     }
     case types.DELETE: {
