@@ -17,11 +17,13 @@ export default function HomeScreen({ navigation, route}) {
     return <AppLoading />;
   }
 
+  /*
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'DROP TABLE IF EXISTS fabricTable',[]
     )
   })
+*/
 
   // Create Fabrics table
   bobbinDb.transaction((tx) => {
@@ -35,7 +37,7 @@ export default function HomeScreen({ navigation, route}) {
         fabric_type VARCHAR(64) NOT NULL, \
         fabric_fiber VARCHAR(64) NOT NULL, \
         fabric_weight VARCHAR(64) NOT NULL, \
-        fabric_img VARCHAR(64) NOT NULL \
+        fabric_img VARCHAR(64) \
         )',
       []
     );
@@ -53,6 +55,12 @@ export default function HomeScreen({ navigation, route}) {
     );
   });
  
+  bobbinDb.transaction((tx) => {
+    tx.executeSql(
+      'DROP TABLE IF EXISTS projectTable',[]
+    )
+  });
+
   // Create Project table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
@@ -61,11 +69,14 @@ export default function HomeScreen({ navigation, route}) {
         pattern_name VARCHAR(64) NOT NULL, \
         project_title VARCHAR(64) UNIQUE, \
         project_yards VARCHAR(64) NOT NULL, \
+        project_yard_frac VARCHAR(64) NOT NULL, \
+        project_img VARCHAR(64) \
         )',
       [],
     );
   });
   
+  /*
   // Create Project fabrics table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
@@ -105,7 +116,7 @@ export default function HomeScreen({ navigation, route}) {
       [],
     );
   });
-
+*/
   return (
     <View style={styles.container}>
       <Card containerStyle={styles.card}>

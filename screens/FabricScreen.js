@@ -18,7 +18,7 @@ export default function FabricScreen({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Image resizeMode='cover' style={styles.image} source={{ uri: route.params.image }}/>
+      {route.params.image && <Image resizeMode='cover' style={styles.image} source={{ uri: route.params.image }}/>}
       <View style={styles.info}>
         <View style={styles.flexrow}>
           <Text style={styles.paramtext}>Name   </Text>

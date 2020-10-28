@@ -10,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 const randomId = () => Math.random().toString()
 const typedatabase = ['Batik', 'Broadcloth', 'Canvas', 'Chiffon', 'Quilting cotton', 'Flannel', 'Fleece', 'Jersey', 'Lawn', 'Linen', 'Poplin', 'Crepe',
 'Crepe de Chine', 'Voile', 'Batiste', 'Brocade', 'Challis', 'Chambray', 'Denim', 'Chenille', 'Corduroy', 'Dupioni', 'Eyelet', 'Muslin', 'Gabardine', 'Gauze',
-'Lace', 'Lawn', 'Neoprene', 'Organza', 'Oxford', 'Satin', 'Sateen', 'Shantung', 'Tricot', 'Tulle', 'Twill', 'Velvet']
+'Lace', 'Neoprene', 'Organza', 'Oxford', 'Satin', 'Sateen', 'Shantung', 'Tricot', 'Tulle', 'Twill', 'Velvet']
 const fiberdatabase = ['Cotton', 'Polyester', 'Rayon', 'Linen', 'Acetate', 'Acrylic', 'Nylon', 'Silk', 'Wool', 'Polyester/Cotton', 'Lycra/Cotton', 'Wool/Cotton', 
 'Linen/Cotton', 'Rayon/Cotton', 'Nylon/Wool', 'Polyester/Wool', 'Silk/Wool', 'Silk/Linen', 'Silk/Rayon']
 
@@ -23,7 +23,6 @@ export default function NewFabricScreen({ navigation, route }) {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
 
     if (!result.cancelled) {
       setImage(result.uri);
