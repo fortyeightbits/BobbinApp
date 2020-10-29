@@ -67,7 +67,7 @@ export default function HomeScreen({ navigation, route}) {
       'CREATE TABLE IF NOT EXISTS projectTable (        \
         project_id VARCHAR(64) UNIQUE,   \
         pattern_name VARCHAR(64) NOT NULL, \
-        project_title VARCHAR(64) UNIQUE, \
+        project_title VARCHAR(64) NOT NULL, \
         project_yards VARCHAR(64) NOT NULL, \
         project_yard_frac VARCHAR(64) NOT NULL, \
         project_img VARCHAR(64) \

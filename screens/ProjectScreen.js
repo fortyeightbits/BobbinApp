@@ -1,8 +1,9 @@
 import React from 'react';
-import { Image, Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Image, Text, View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
-import { Input, Icon, Button } from 'react-native-elements';
+import { Icon, Button } from 'react-native-elements';
+import { types } from './ProjectListScreen'
 
 export default function ProjectScreen({ navigation, route }) {
 
@@ -20,12 +21,19 @@ export default function ProjectScreen({ navigation, route }) {
     return <AppLoading />;
   }
 
-  //TODO image scrollview
+  let projImg = [];
+  if(route.params.images) {
+    let splitImg = route.params.images.split(",");
+      projImg = splitImg.map((img, index) => {
+        console.log(img)
+        return <Image key={index.toString()} resizeMode='cover' style={[splitImg.length == 1 ? styles.singleimage : styles.image]} source={{uri: img}}/>
+      })
+  }
+
   return (
     <View>
       <ScrollView horizontal> 
-      <Image resizeMode='cover' style={styles.image} source={route.params.imgreq[0]}/>
-      <Image resizeMode='cover' style={styles.image} source={route.params.imgreq[1]}/> 
+      {projImg}
       </ScrollView>
       <View style={styles.info}>
         {route.params.projectName ? (
@@ -60,6 +68,12 @@ export default function ProjectScreen({ navigation, route }) {
           navigation.push('NewProjectScreen', route.params); 
         }}
         />
+        <Button icon={ <Icon type='ionicon' name="ios-trash" containerStyle={styles.button} color='#4f99e3'/>} 
+          type="outline" title="Delete" containerStyle={styles.button}
+        onPress={() => {
+          navigation.navigate('ProjectListScreen', {action_type: types.DELETE, projectid: route.params.id}); 
+        }}
+        />   
       </View>
     </View>
   )
@@ -91,7 +105,11 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 300,
-    width: 300,
+    width: 350,
+  },
+  singleimage: {
+    height: 300,
+    width: Dimensions.get('window').width,
   },
   info: {
     padding: 20,

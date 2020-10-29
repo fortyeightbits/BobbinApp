@@ -1,5 +1,5 @@
 import React, { useState, useContext, useReducer } from 'react';
-import { Image, Text, View, StyleSheet, Picker } from 'react-native';
+import { Image, Text, View, StyleSheet, Picker, FlatList } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,15 +13,19 @@ const randomId = () => Math.random().toString()
 export default function NewProjectScreen({ navigation, route }) {
 
   const pickImage = async () => {
+    if (project_img.length >= 5)
+      return;
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
-      aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      let list = [...project_img];
+      list.push(result.uri);
+      setImages(list);
     }
   };
 
@@ -30,7 +34,7 @@ export default function NewProjectScreen({ navigation, route }) {
   const [pattern_name, setPattern] = useState(route.params ? (route.params.patternName) : '')
   const [project_yardage, setYardage] = useState(route.params ? (route.params.yardage) : '')
   const [proj_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
-  const [project_img, setImage] = useState(route.params ? (route.params.image) : null); //TODO multiple
+  const [project_img, setImages] = useState(route.params && route.params.images ? (route.params.images.split(",")) : []);
   const [notion, setNotion] = useState('')
   //const [selected_fabric, setSelectedFabric] = useState('');
 
@@ -38,12 +42,12 @@ export default function NewProjectScreen({ navigation, route }) {
   const [visible, setVisible] = useState(false);
   const toggleOverlay = () => {setVisible(!visible);};
 
-  const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac) => (
+  const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img) => (
     { id: randomId(), projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
-      notions: notionlist, image: project_img})
-  const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac) => (
+      notions: notionlist, images: project_img})
+  const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img) => (
     { id: route.params.id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
-      notions: notionlist, iimage: project_img})
+      notions: notionlist, images: project_img})
 
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -65,6 +69,7 @@ export default function NewProjectScreen({ navigation, route }) {
         style={{ height: 50, width: 200 }}
         onValueChange={(itemValue, itemIndex) => setSelectedFabric(itemValue)}>
       </Picker>*/
+
   return (
     <View style={styles.container}>
 
@@ -93,8 +98,6 @@ export default function NewProjectScreen({ navigation, route }) {
           <Picker.Item label="7/8" value="7/8" />
           </Picker>
         </View>
-      <Text style={styles.paramtext}>Fabric</Text>
-      <Text>To do!</Text>
       <Text style={styles.paramtext}>Notions</Text>
       <Input style={styles.notioninput} placeholder={'Add a notion and hit enter'} value={notion} onChangeText={(value) => setNotion(value)}
       onSubmitEditing={() => {
@@ -103,23 +106,36 @@ export default function NewProjectScreen({ navigation, route }) {
         setNotion('')}}/>
       <NotionList items={state.list} onPressItem={(id) => dispatch(actionCreators.delete(id))}/>
 
-      <View style={styles.upload}>        
-          {project_img && <Image source={{ uri: project_img }} style={{ height: 10}}/>}
-          <Button title={project_img ? "Edit Image" : "Add Image"} onPress={pickImage} containerStyle={styles.uploadbutton}/>
-        </View>
+      <View style={styles.upload}>
+        <FlatList
+        data={project_img}
+        keyExtractor={(item) => item}
+        numColumns={5}
+        renderItem={({ item }) => {
+          return (
+            <Image source={{width: 65, height: 65, uri: item}} style={{marginRight: 5}}/>
+          )}
+        }/>
+        <Button title="Add Image" onPress={pickImage} containerStyle={styles.uploadbutton}/>
+      </View>
 
       <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
             type="outline" title={route.params ? "Save Project" : "Add Project"} containerStyle={styles.button}
       onPress={() => {
+        let joinedImg = "";
+        if (project_img.length > 1)
+          joinedImg = project_img.join(",");
+        else
+          joinedImg = project_img[0]
         if (project_title === '' && pattern_name === '')
           toggleOverlay()
         else if (!route.params){
           navigation.navigate('ProjectListScreen', {action_type: types.ADD, 
-            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, project_img)}); 
+            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg)}); 
         }
         else {
         navigation.navigate('ProjectListScreen', {action_type: types.MODIFY, 
-          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, project_img)}); 
+          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg)}); 
         }
       }}
       />
@@ -128,7 +144,6 @@ export default function NewProjectScreen({ navigation, route }) {
       <Overlay isVisible={visible} onBackdropPress={toggleOverlay} overlayStyle={{padding: 10, margin: 10,}}>
         <Text style={styles.paramtext}>Please give this project a title or pattern name!</Text>
       </Overlay>
-
     </View>
   )
 }
