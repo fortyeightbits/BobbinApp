@@ -109,7 +109,6 @@ export default function FabricListScreen({ navigation, route }) {
           {
             let item = results.rows.item(i);
             if (fabricInitialState.inventory.every((fabric) => fabric.id !== item.fabric_id)) {
-              console.log("pushing")
               fabricInitialState.inventory.push(createFabric(item.fabric_id, item.fabric_name, item.fabric_width, item.fabric_yardage, item.fabric_yard_frac, 
                 item.fabric_type, item.fabric_fiber, item.fabric_weight, item.fabric_img))
             }

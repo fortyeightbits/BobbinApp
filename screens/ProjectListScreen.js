@@ -21,10 +21,9 @@ export function reducer(state, action) {
   switch (action.type) {
     case types.ADD:{
       if (state.projectlist.every((item) => item.id !== action.payload.id)){
-        console.log("Adding")
         const projobj = action.payload;
         bobbinDb.transaction(function (tx) {
-          tx.executeSql( //TODO pictures
+          tx.executeSql(
             'INSERT INTO projectTable (\
               project_id, \
               pattern_name,\
@@ -33,9 +32,9 @@ export function reducer(state, action) {
               project_yard_frac, \
               project_img) \
             VALUES (?,?,?,?,?,?)',
-            [projobj.id, projobj.projectName, projobj.patternName, projobj.yardage, projobj.yardfrac, projobj.image],
+            [projobj.id, projobj.projectName, projobj.patternName, projobj.yardage, projobj.yardfrac, projobj.images],
             (tx, results) => {console.log("Added to table")},
-            (tx, error) => {console.log(error);},            
+            (tx, error) => {console.log(error)},            
           );
         });
         return { ...state, projectlist: [...state.projectlist, action.payload] }
@@ -63,7 +62,7 @@ export default function ProjectListScreen({ navigation, route }) {
   function projectInit(arg){
 
     const createProject = (project_id, project_title, pattern_name, project_yardage, proj_yard_frac, project_img) => (
-      { id: project_id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac, image: project_img
+      { id: project_id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac, images: project_img
     })
 
     let projectInitialState = {
@@ -81,7 +80,6 @@ export default function ProjectListScreen({ navigation, route }) {
           {
             let item = results.rows.item(i);
             if (projectInitialState.projectlist.every((proj) => proj.id !== item.project_id)) {
-              console.log("pushing")
               projectInitialState.projectlist.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_yardage, 
                 item.proj_yard_frac, item.project_img))
             }
@@ -130,13 +128,16 @@ export default function ProjectListScreen({ navigation, route }) {
       <FlatList
       data={state.projectlist}
       renderItem = {({item}) => {
-
-        let imglist = []
-        if(item.imgreq) {
-           imglist = item.imgreq.map((img, index) => {
-            const numImg = (item.imgreq.length > 0 ? item.imgreq.length : 1);
-            const lengthStyle = {width: Dimensions.get('window').width/(numImg < 3 ? numImg : 1)} 
-            return <Image key={index.toString()} style={[styles.imgbox, lengthStyle]} resizeMode='cover' source={img}/>
+        let imglist = [];
+        console.log("render")
+        console.log(item)
+        if (item.images)
+        {
+          let splitImg = item.images.split(",");
+          imglist = splitImg.map((img, index) => {
+            const numImg = (splitImg.length > 0 ? splitImg.length : 1);
+            const lengthStyle = {width: Dimensions.get('window').width/(numImg <= 3 ? numImg : 1)}
+            return <Image key={index.toString()} style={[styles.imgbox, lengthStyle]} resizeMode='cover' source={{uri: img}}/>
           })
         }
         return (
@@ -147,7 +148,7 @@ export default function ProjectListScreen({ navigation, route }) {
         </View>
         </TouchableOpacity> 
         )}}
-      keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id}
       />
 
       <Icon type='ionicon' name='ios-add-circle' color='#4f99e3' size={75} containerStyle={styles.addicon}
