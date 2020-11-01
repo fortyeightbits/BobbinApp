@@ -1,4 +1,4 @@
-import React, { useState, useContext, useReducer } from 'react';
+import React, { useState, useReducer } from 'react';
 import { Image, Text, View, StyleSheet, Picker, FlatList } from 'react-native';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
@@ -35,6 +35,7 @@ export default function NewProjectScreen({ navigation, route }) {
   const [project_yardage, setYardage] = useState(route.params ? (route.params.yardage) : '')
   const [proj_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
   const [project_img, setImages] = useState(route.params && route.params.images ? (route.params.images.split(",")) : []);
+  const [project_complete, setComplete] = useState(route.params ? (route.params.complete) : 0)
   const [notion, setNotion] = useState('')
   //const [selected_fabric, setSelectedFabric] = useState('');
 
@@ -42,12 +43,12 @@ export default function NewProjectScreen({ navigation, route }) {
   const [visible, setVisible] = useState(false);
   const toggleOverlay = () => {setVisible(!visible);};
 
-  const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img) => (
+  const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img, project_complete) => (
     { id: randomId(), projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
-      notions: notionlist, images: project_img})
-  const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img) => (
+      notions: notionlist, images: project_img, complete: project_complete})
+  const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img, project_complete) => (
     { id: route.params.id, projectName: project_title, patternName: pattern_name, yardage: project_yardage, yardfrac: proj_yard_frac,
-      notions: notionlist, images: project_img})
+      notions: notionlist, images: project_img, complete: project_complete})
 
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -121,7 +122,7 @@ export default function NewProjectScreen({ navigation, route }) {
 
       <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
             type="outline" title={route.params ? "Save Project" : "Add Project"} containerStyle={styles.button}
-      onPress={() => {
+        onPress={() => {
         let joinedImg = "";
         if (project_img.length > 1)
           joinedImg = project_img.join(",");
@@ -131,11 +132,11 @@ export default function NewProjectScreen({ navigation, route }) {
           toggleOverlay()
         else if (!route.params){
           navigation.navigate('ProjectListScreen', {action_type: types.ADD, 
-            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg)}); 
+            projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg, project_complete)}); 
         }
         else {
         navigation.navigate('ProjectListScreen', {action_type: types.MODIFY, 
-          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg)}); 
+          projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg, project_complete)}); 
         }
       }}
       />
@@ -153,7 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,   
   },
   uploadbutton:{
-    padding: 10,
     marginLeft: 30,
     marginRight: 30,
   },
@@ -174,13 +174,15 @@ const styles = StyleSheet.create({
   notioninput: {
     borderWidth: 0,
     fontSize: 15,
+    fontFamily: 'Proxima',
   },
   input:{
     fontFamily: 'Proxima',
+    fontSize: 18,
   },
   paramtext:{
     fontFamily: 'Proxima',
-    fontSize: 18,
+    fontSize: 15,
     paddingLeft: 10,
   },
   button:{
@@ -188,9 +190,5 @@ const styles = StyleSheet.create({
   },
   yarddropdown:{
     width: 120,
-  },
-  image: {
-    height: undefined,
-    width: undefined,
   },
 });

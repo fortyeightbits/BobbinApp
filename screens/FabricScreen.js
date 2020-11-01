@@ -20,9 +20,11 @@ export default function FabricScreen({ navigation, route }) {
     <View style={styles.container}>
       {route.params.image && <Image resizeMode='cover' style={styles.image} source={{ uri: route.params.image }}/>}
       <View style={styles.info}>
+        {route.params.name ? (
         <View style={styles.flexrow}>
           <Text style={styles.paramtext}>Name   </Text>
-          <Text style={styles.infotext}>{route.params.name}</Text></View>
+          <Text style={styles.infotext}>{route.params.name}</Text>
+        </View> ) : []}
         {route.params.width ? (
         <View style={styles.flexrow}>
           <Text style={styles.paramtext}>Width   </Text> 
@@ -44,7 +46,7 @@ export default function FabricScreen({ navigation, route }) {
         </View> ) : []}
         {route.params.type ? (
         <View style={styles.flexrow}>
-          <Text style={styles.paramtext}>Type     </Text> 
+          <Text style={styles.paramtext}>Type    </Text> 
           <Text style={styles.infotext}>{route.params.type}</Text>
         </View> ) : []}
         {route.params.weight ? (
@@ -94,6 +96,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Proxima',
     fontSize: 15,
     paddingTop: 3,
+    flex: 1,
+    flexWrap: 'wrap',
   },
   info: {
     padding: 20,
