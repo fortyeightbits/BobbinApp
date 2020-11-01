@@ -5,41 +5,48 @@ import HomeNav from './navigation/HomeNav'
 import FabricNav from './navigation/FabricNav'
 import ProjectNav from './navigation/ProjectNav'
 
-const Drawer = createDrawerNavigator();
+const Drawer = createDrawerNavigator()
 
-export default function App() {
-
+export default function App () {
   return (
-    <NavigationContainer independent={true}>
+    <NavigationContainer independent>
       <Drawer.Navigator>
-      <Drawer.Screen name="HomeNav" 
-        options={{
-        title: 'Home',
-        headerTitleStyle: {
-          fontSize: 20,
-          fontFamily: 'SpaceMono-Regular', },
-        }}
-      component={HomeNav} />
+        <Drawer.Screen
+          name='HomeNav'
+          options={{
+            title: 'Home',
+            headerTitleStyle: {
+              fontSize: 20,
+              fontFamily: 'SpaceMono-Regular'
+            }
+          }}
+          component={HomeNav}
+        />
 
-      <Drawer.Screen name="FabricNav" 
-        options={{
-        title: 'Fabric List',
-        headerTitleStyle: {
-          fontSize: 20,
-          fontFamily: 'SpaceMono-Regular', },
-        }}
-      component={FabricNav} />
+        <Drawer.Screen
+          name='FabricNav'
+          options={{
+            title: 'Fabric List',
+            headerTitleStyle: {
+              fontSize: 20,
+              fontFamily: 'SpaceMono-Regular'
+            }
+          }}
+          component={FabricNav}
+        />
 
-        <Drawer.Screen name="ProjectNav" 
-        options={{
-        title: 'Projects',
-        headerTitleStyle: {
-          fontSize: 20,
-          fontFamily: 'SpaceMono-Regular', },
-        }}
-        component={ProjectNav} />   
+        <Drawer.Screen
+          name='ProjectNav'
+          options={{
+            title: 'Projects',
+            headerTitleStyle: {
+              fontSize: 20,
+              fontFamily: 'SpaceMono-Regular'
+            }
+          }}
+          component={ProjectNav}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   )
-
 }

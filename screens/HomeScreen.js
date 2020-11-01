@@ -1,26 +1,25 @@
-import React, {useState} from 'react';
-import { Text, View, StyleSheet} from 'react-native';
-import { Card, Button } from 'react-native-elements';
-import { useFonts } from 'expo-font';
-import { AppLoading } from 'expo';
-import * as SQLite from 'expo-sqlite';
-import { useIsFocused } from '@react-navigation/native';
+import React, { useState } from 'react'
+import { Text, View, StyleSheet } from 'react-native'
+import { Card, Button } from 'react-native-elements'
+import { useFonts } from 'expo-font'
+import { AppLoading } from 'expo'
+import * as SQLite from 'expo-sqlite'
+import { useIsFocused } from '@react-navigation/native'
 
-export var bobbinDb = SQLite.openDatabase('BobbinDatabase.db');
+export const bobbinDb = SQLite.openDatabase('BobbinDatabase.db')
 
-export default function HomeScreen({ navigation, route}) {
-
+export default function HomeScreen ({ navigation, route }) {
   const [fabricCnt, setFabricCnt] = useState(0)
   const [projCnt, setProjCnt] = useState(0)
-  const isFocused = useIsFocused();
+  const isFocused = useIsFocused()
 
-  let [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
-    'Proxima': require('../assets/fonts/ProximaNova-Regular.otf'),
-  });
+    Proxima: require('../assets/fonts/ProximaNova-Regular.otf')
+  })
 
   if (!fontsLoaded) {
-    return <AppLoading />;
+    return <AppLoading />
   }
 
   // Create Fabrics table
@@ -38,9 +37,9 @@ export default function HomeScreen({ navigation, route}) {
         fabric_img VARCHAR(64) \
         )',
       []
-    );
-  });
-  
+    )
+  })
+
   // Create Notions table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
@@ -49,11 +48,11 @@ export default function HomeScreen({ navigation, route}) {
         notion_name VARCHAR(64) UNIQUE, \
         notion_quantity VARCHAR(64) NOT NULL, \
         )',
-      [],
-    );
-  });
- 
-/*
+      []
+    )
+  })
+
+  /*
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'DROP TABLE IF EXISTS projectTable',[]
@@ -72,10 +71,10 @@ export default function HomeScreen({ navigation, route}) {
         project_img VARCHAR(64), \
         project_complete INTEGER \
         )',
-      [],
-    );
-  });
-  
+      []
+    )
+  })
+
   /*
   // Create Project fabrics table
   bobbinDb.transaction((tx) => {
@@ -96,7 +95,7 @@ export default function HomeScreen({ navigation, route}) {
       [],
     );
   });
-  
+
   // Create Project notions table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
@@ -123,10 +122,10 @@ export default function HomeScreen({ navigation, route}) {
         'SELECT * FROM fabricTable',
         [],
         (tx, results) => {
-          setFabricCnt(results.rows.length);
+          setFabricCnt(results.rows.length)
         },
         (tx, error) => console.log(error)
-      );
+      )
     })
 
     bobbinDb.transaction(function (tx) {
@@ -134,30 +133,32 @@ export default function HomeScreen({ navigation, route}) {
         'SELECT * FROM projectTable',
         [],
         (tx, results) => {
-          setProjCnt(results.rows.length);
+          setProjCnt(results.rows.length)
         },
         (tx, error) => console.log(error)
-      );
+      )
     })
   }
 
   return (
     <View style={styles.container}>
       <Card containerStyle={styles.card}>
-      <Card.Title style={styles.headerTitleStyle}>Fabric Stash</Card.Title>
-      <Card.Divider/>
-      <Text style={styles.cardtext}>{"You have " + fabricCnt + " " + (fabricCnt > 1 ? "fabrics":"fabric") + " in your inventory."}</Text>
-      <Button
-        type="outline" title='Go to Fabric List' buttonStyle={styles.button} titleStyle={styles.buttonText}
-        onPress={() => navigation.push('FabricNav')}/>
+        <Card.Title style={styles.headerTitleStyle}>Fabric Stash</Card.Title>
+        <Card.Divider />
+        <Text style={styles.cardtext}>{'You have ' + fabricCnt + ' ' + (fabricCnt > 1 ? 'fabrics' : 'fabric') + ' in your inventory.'}</Text>
+        <Button
+          type='outline' title='Go to Fabric List' buttonStyle={styles.button} titleStyle={styles.buttonText}
+          onPress={() => navigation.push('FabricNav')}
+        />
       </Card>
       <Card>
-      <Card.Title style={styles.headerTitleStyle}>Projects</Card.Title>
-      <Card.Divider/>
-      <Text style={styles.cardtext}>{"You have " + projCnt + " " + (projCnt > 1 ? "projects":"project") + " in progress."}</Text>
-      <Button
-        type="outline" title='Go to Project List' titleStyle={styles.buttonText}
-        onPress={() => navigation.push('ProjectNav')}/>
+        <Card.Title style={styles.headerTitleStyle}>Projects</Card.Title>
+        <Card.Divider />
+        <Text style={styles.cardtext}>{'You have ' + projCnt + ' ' + (projCnt > 1 ? 'projects' : 'project') + ' in progress.'}</Text>
+        <Button
+          type='outline' title='Go to Project List' titleStyle={styles.buttonText}
+          onPress={() => navigation.push('ProjectNav')}
+        />
       </Card>
     </View>
   )
@@ -165,17 +166,17 @@ export default function HomeScreen({ navigation, route}) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   cardtext: {
     fontFamily: 'Proxima',
-    paddingBottom: 20,
+    paddingBottom: 20
   },
   buttonText: {
-    fontFamily: 'Proxima',
+    fontFamily: 'Proxima'
   },
   headerTitleStyle: {
     fontSize: 18,
-    fontFamily: 'Proxima',
-  },
-});
+    fontFamily: 'Proxima'
+  }
+})
