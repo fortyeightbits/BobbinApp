@@ -1,13 +1,19 @@
-import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import { Text, View, StyleSheet} from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import { useFonts } from 'expo-font';
 import { AppLoading } from 'expo';
 import * as SQLite from 'expo-sqlite';
+import { useIsFocused } from '@react-navigation/native';
 
 export var bobbinDb = SQLite.openDatabase('BobbinDatabase.db');
 
 export default function HomeScreen({ navigation, route}) {
+
+  const [fabricCnt, setFabricCnt] = useState(0)
+  const [projCnt, setProjCnt] = useState(0)
+  const isFocused = useIsFocused();
+
   let [fontsLoaded] = useFonts({
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
     'Proxima': require('../assets/fonts/ProximaNova-Regular.otf'),
@@ -17,20 +23,12 @@ export default function HomeScreen({ navigation, route}) {
     return <AppLoading />;
   }
 
-  /*
-  bobbinDb.transaction((tx) => {
-    tx.executeSql(
-      'DROP TABLE IF EXISTS fabricTable',[]
-    )
-  })
-*/
-
   // Create Fabrics table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'CREATE TABLE IF NOT EXISTS fabricTable (        \
         fabric_id VARCHAR(64) UNIQUE,   \
-        fabric_name VARCHAR(64) UNIQUE, \
+        fabric_name VARCHAR(64) NOT NULL, \
         fabric_width VARCHAR(64) NOT NULL, \
         fabric_yardage VARCHAR(64) NOT NULL, \
         fabric_yard_frac VARCHAR(64) NOT NULL, \
@@ -55,11 +53,13 @@ export default function HomeScreen({ navigation, route}) {
     );
   });
  
+/*
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'DROP TABLE IF EXISTS projectTable',[]
     )
   });
+*/
 
   // Create Project table
   bobbinDb.transaction((tx) => {
@@ -70,7 +70,8 @@ export default function HomeScreen({ navigation, route}) {
         project_title VARCHAR(64) NOT NULL, \
         project_yards VARCHAR(64) NOT NULL, \
         project_yard_frac VARCHAR(64) NOT NULL, \
-        project_img VARCHAR(64) \
+        project_img VARCHAR(64), \
+        project_complete INTEGER \
         )',
       [],
     );
@@ -117,12 +118,36 @@ export default function HomeScreen({ navigation, route}) {
     );
   });
 */
+  if (isFocused) {
+    bobbinDb.transaction(function (tx) {
+      tx.executeSql(
+        'SELECT * FROM fabricTable',
+        [],
+        (tx, results) => {
+          setFabricCnt(results.rows.length);
+        },
+        (tx, error) => console.log(error)
+      );
+    })
+
+    bobbinDb.transaction(function (tx) {
+      tx.executeSql(
+        'SELECT * FROM projectTable',
+        [],
+        (tx, results) => {
+          setProjCnt(results.rows.length);
+        },
+        (tx, error) => console.log(error)
+      );
+    })
+  }
+
   return (
     <View style={styles.container}>
       <Card containerStyle={styles.card}>
       <Card.Title style={styles.headerTitleStyle}>Fabric Stash</Card.Title>
       <Card.Divider/>
-      <Text style={styles.cardtext}>{"This should have a fabric count but I can't get context to work :( "}</Text>
+      <Text style={styles.cardtext}>{"You have " + fabricCnt + " " + (fabricCnt > 1 ? "fabrics":"fabric") + " in your inventory."}</Text>
       <Button
         type="outline" title='Go to Fabric List' buttonStyle={styles.button} titleStyle={styles.buttonText}
         onPress={() => navigation.push('FabricNav')}/>
@@ -130,7 +155,7 @@ export default function HomeScreen({ navigation, route}) {
       <Card>
       <Card.Title style={styles.headerTitleStyle}>Projects</Card.Title>
       <Card.Divider/>
-      <Text style={styles.cardtext}>{"This should have a project count but I can't get context to work :( "}</Text>
+      <Text style={styles.cardtext}>{"You have " + projCnt + " " + (projCnt > 1 ? "projects":"project") + " in progress."}</Text>
       <Button
         type="outline" title='Go to Project List' titleStyle={styles.buttonText}
         onPress={() => navigation.push('ProjectNav')}/>

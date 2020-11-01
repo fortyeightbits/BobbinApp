@@ -73,7 +73,7 @@ export default function ProjectScreen({ navigation, route }) {
         onPress={() => {
           navigation.navigate('ProjectListScreen', {action_type: types.DELETE, projectid: route.params.id}); 
         }}
-        />   
+        />
       </View>
     </View>
   )
@@ -94,10 +94,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginRight: 40,
   },
+  notiontext:{
+    width: Dimensions.get('window').width
+  },
   infotext:{
     fontFamily: 'Proxima',
     fontSize: 15,
     paddingTop: 3,
+    flex: 1,
+    flexWrap: 'wrap',
   },
   flexrow: {
     flexDirection: 'row',

@@ -103,8 +103,6 @@ export default function FabricListScreen({ navigation, route }) {
         'SELECT * FROM fabricTable',
         [],
         (tx, results) => {
-          console.log('fabricInit results');
-          console.log(results)
           for (let i = 0; i < results.rows.length; i++)
           {
             let item = results.rows.item(i);
@@ -164,8 +162,8 @@ export default function FabricListScreen({ navigation, route }) {
         return (
         <TouchableOpacity onPress={() => { navigation.push('FabricScreen', item)}}>
         <Text style={styles.fabricdes}>
-          <Text style={styles.fabricname}>{item.name}</Text>
-          {"  " + item.yardage + " " + (item.yardfrac ? item.yardfrac + " " : "") + ((item.yardage || item.yardfrac) ? "yards " : "") 
+          <Text style={styles.fabricname}>{item.name + (item.name ? "  " : "")}</Text>
+          {item.yardage + (item.yardage ? " " : "") + (item.yardfrac ? item.yardfrac + " " : "") + ((item.yardage || item.yardfrac) ? "yards " : "") 
           + ((item.fiber || item.type) && (item.yardage || item.yardfrac) ? "of " : "") 
           + ((item.fiber || item.type) ? (item.fiber + " " + item.type) : "")}
         </Text>
@@ -198,6 +196,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Proxima',
     fontSize: 15,
     textTransform: 'lowercase',
+    flexWrap: 'wrap',
   },
   fabricname: {
     fontSize: 18,

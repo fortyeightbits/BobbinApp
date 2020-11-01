@@ -157,7 +157,7 @@ export default function NewFabricScreen({ navigation, route }) {
         <Button icon={ <Icon type='ionicon' name="ios-add-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
                 type="outline" title={route.params ? "Save Fabric" : "Add Fabric"} containerStyle={styles.button}
         onPress={() => {
-          if (fabric_name === '')
+          if (fabric_name == '' && fabric_type == '' && fabric_fiber == '')
             toggleOverlay()
           else if (!route.params)
             navigation.navigate('FabricListScreen', {action_type: types.ADD, 
@@ -172,7 +172,7 @@ export default function NewFabricScreen({ navigation, route }) {
       </View>
 
       <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
-        <Text style={styles.paramtext}>Please give this fabric a name!</Text>
+        <Text style={styles.paramtext}>Please give this fabric a name, fiber or weave type!</Text>
       </Overlay>
 
     </View>
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   paramtext:{
     fontFamily: 'Proxima',
-    fontSize: 18,
+    fontSize: 15,
     paddingLeft: 10,
   },
   input:{
