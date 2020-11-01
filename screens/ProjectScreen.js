@@ -68,6 +68,12 @@ export default function ProjectScreen({ navigation, route }) {
           navigation.push('NewProjectScreen', route.params); 
         }}
         />
+        <Button icon={ <Icon type='ionicon' name="ios-checkmark" containerStyle={styles.button} color='#4f99e3'/>} 
+          type="outline" title="Complete" containerStyle={styles.button}
+        onPress={() => {
+          navigation.push('CompleteProjectScreen', route.params); 
+        }}
+        />        
         <Button icon={ <Icon type='ionicon' name="ios-trash" containerStyle={styles.button} color='#4f99e3'/>} 
           type="outline" title="Delete" containerStyle={styles.button}
         onPress={() => {

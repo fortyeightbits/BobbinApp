@@ -33,10 +33,10 @@ export default function CompleteProjectScreen({ navigation, route }) {
       <Text>[Placeholder for adjusting fabric yardage]</Text>
     </View>
 
-      <Button icon={ <Icon type='ionicon' name="checkmark-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
+      <Button icon={ <Icon type='ionicon' name="ios-checkmark-circle-outline" containerStyle={styles.button} color='#4f99e3'/>} 
             type="outline" title={"Mark Completed"} containerStyle={styles.button}
         onPress={() => {        
-          navigation.navigate('ProjectListScreen', {action_type: types.MODIFY, projectid: route.params.id}); 
+          navigation.navigate('ProjectListScreen', {action_type: types.COMPLETE, projectid: route.params.id}); 
         }
       }
       />

@@ -23,7 +23,6 @@ export function reducer(state, action) {
   switch (action.type) {
     case types.ADD:{
       if (state.projectlist[0].data.every((item) => item.id !== action.payload.id)){
-        console.log(action.payload)
         const projobj = action.payload;
         bobbinDb.transaction(function (tx) {
           tx.executeSql(
@@ -38,14 +37,13 @@ export function reducer(state, action) {
             VALUES (?,?,?,?,?,?,?)',
             [projobj.id, projobj.projectName, projobj.patternName, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete],
             (tx, results) => {console.log("Added to table")},
-            (tx, error) => {console.log(error)},            
+            (tx, error) => {console.log(error)},       
           );
         });
         //return { ...state, projectlist: [...state.projectlist, state.projectlist[0].data: [...state.projectlist[0].data, action.payload]]}
         state.projectlist[0].data.push(action.payload)
         return {...state};
       }
-      break;
     }
     case types.MODIFY:{
       state.projectlist[0].data.map((item) => item.id === action.payload.id ? action.payload : item);
@@ -61,11 +59,16 @@ export function reducer(state, action) {
           }
         );
       });
-      state.projectlist[0].data.filter((item) => item.id !== action.payload);
-      return [...state];
+      state.projectlist[0].data = state.projectlist[0].data.filter((item) => item.id !== action.payload);
+      return {...state};
       //return {...state, projectlist: state.projectlist.filter((item) => item.id !== action.payload)}
     }
     case types.COMPLETE:{
+      let tmp = state.projectlist[0].data.find((item) => item.id === action.payload);
+      state.projectlist[0].data = state.projectlist[0].data.filter((item) => item.id !== action.payload);
+      tmp.complete = 1;
+      state.projectlist[1].data.push(tmp)
+        //TODO DB MODIFY COMPLETE
       return {...state};
     }
   }
@@ -107,7 +110,6 @@ export default function ProjectListScreen({ navigation, route }) {
             let item = results.rows.item(i);
             if (!item.project_complete)
             {
-              console.log("push to wip")
               if (projectInitialState.projectlist[0].data.every((proj) => proj.id !== item.project_id)) {
               projectInitialState.projectlist[0].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_yardage, 
                 item.proj_yard_frac, item.project_img, item.project_complete))
@@ -115,7 +117,6 @@ export default function ProjectListScreen({ navigation, route }) {
             }
             else
             {
-              console.log("push to complete")
               if (projectInitialState.projectlist[1].data.every((proj) => proj.id !== item.project_id)) {
               projectInitialState.projectlist[1].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_yardage, 
                 item.proj_yard_frac, item.project_img, item.project_complete))
@@ -149,6 +150,9 @@ export default function ProjectListScreen({ navigation, route }) {
         case types.DELETE:
           dispatch(actionCreators.delete(route.params.projectid));
           break;          
+        case types.COMPLETE:
+          dispatch(actionCreators.complete(route.params.projectid));
+          break;              
       }
     }
   }, [route.params]);
@@ -181,7 +185,7 @@ export default function ProjectListScreen({ navigation, route }) {
         return (
         <TouchableOpacity onPress={() => { navigation.push('ProjectScreen', item)}}>
           <View style={styles.listheading}>
-            <Text style={styles.projectname}><Text style={{fontWeight: 'bold'}}>{item.projectName}</Text>{item.projectName && item.patternName ? " | " : ""}
+            <Text style={styles.projectname}>{item.projectName}{item.projectName && item.patternName ? " | " : ""}
             {item.patternName}</Text>
           </View>
           <View style={styles.flexrow}>{imglist}</View>

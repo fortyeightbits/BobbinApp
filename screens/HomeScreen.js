@@ -60,7 +60,6 @@ export default function HomeScreen({ navigation, route}) {
     )
   });
 */
-
   // Create Project table
   bobbinDb.transaction((tx) => {
     tx.executeSql(
