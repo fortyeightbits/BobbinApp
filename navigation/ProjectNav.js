@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { StyleSheet } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import ProjectListScreen from '../screens/ProjectListScreen'
 import NewProjectScreen from '../screens/NewProjectScreen'
 import ProjectScreen from '../screens/ProjectScreen'
+import CompleteProjectScreen from '../screens/CompleteProjectScreen'
 
 const Stack = createStackNavigator();
 
@@ -41,6 +41,14 @@ export default function ProjectNav() {
           fontFamily: 'SpaceMono-Regular', },
         }}
         component={ProjectScreen} />
+      <Stack.Screen name="CompleteProjectScreen" 
+        options={{
+        title: 'Complete Project',
+        headerTitleStyle: {
+          fontSize: 20,
+          fontFamily: 'SpaceMono-Regular', },
+        }}
+        component={CompleteProjectScreen} />        
       </Stack.Navigator>
   )
   //</MyContext.Provider>

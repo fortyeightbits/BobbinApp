@@ -54,7 +54,7 @@ export default function NotionList({ items, onPressItem }){
       renderItem={( { item }) => {
         return (
         <View style={styles.listcontainer}>
-        <Text key={item.id} style={styles.row}>{item.name}</Text>
+        <Text key={item.id}>{item.name}</Text>
         <Icon type='ionicon' name="ios-close" containerStyle={styles.icon} color='black' size={30} onPress={() => onPressItem(item.id)}/>
         </View>
       )}}
@@ -69,20 +69,25 @@ const styles = StyleSheet.create({
     flex : 1, 
   },
   flatlist:{
-    height: 150,
+    height: 80,
     flexGrow: 0,
     borderColor: 'white',
+    marginBottom: 10,
   },
   icon:{
-    padding: 2,
+    paddingLeft: 10,
+    paddingTop: -10,
   },
   listcontainer: {
     marginRight: 5,
+    marginLeft: 10,
     flexDirection: 'row',
   },
   row: {
     fontFamily: 'Proxima',
     fontSize: 14,
-    padding: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 0,
   }
 });
