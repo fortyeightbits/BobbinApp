@@ -40,18 +40,6 @@ export default function HomeScreen ({ navigation, route }) {
     )
   })
 
-  // Create Notions table
-  bobbinDb.transaction((tx) => {
-    tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS notionTable (        \
-        notion_id VARCHAR(64) UNIQUE ,  \
-        notion_name VARCHAR(64) UNIQUE, \
-        notion_quantity VARCHAR(64) NOT NULL, \
-        )',
-      []
-    )
-  })
-
   /*
   bobbinDb.transaction((tx) => {
     tx.executeSql(
@@ -66,6 +54,7 @@ export default function HomeScreen ({ navigation, route }) {
         project_id VARCHAR(64) UNIQUE,   \
         pattern_name VARCHAR(64) NOT NULL, \
         project_title VARCHAR(64) NOT NULL, \
+        project_notions VARCHAR(64), \
         project_yards VARCHAR(64) NOT NULL, \
         project_yard_frac VARCHAR(64) NOT NULL, \
         project_img VARCHAR(64), \
@@ -89,26 +78,6 @@ export default function HomeScreen ({ navigation, route }) {
                 ON UPDATE NO ACTION\
         FOREIGN KEY (fabric_id)\
             REFERENCES fabricTable(fabric_id)\
-                ON DELETE CASCADE \
-                ON UPDATE NO ACTION\
-        )',
-      [],
-    );
-  });
-
-  // Create Project notions table
-  bobbinDb.transaction((tx) => {
-    tx.executeSql(
-      'CREATE TABLE IF NOT EXISTS projectNotionsTable(        \
-        project_id INTEGER,   \
-        notion_id INTEGER, \
-        PRIMARY KEY (project_id, notion_id), \
-        FOREIGN KEY (project_id)\
-            REFERENCES projectTable(project_id)\
-                ON DELETE CASCADE \
-                ON UPDATE NO ACTION\
-        FOREIGN KEY (notion_id)\
-            REFERENCES notionTable(notion_id)\
                 ON DELETE CASCADE \
                 ON UPDATE NO ACTION\
         )',

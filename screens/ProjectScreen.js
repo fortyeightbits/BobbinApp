@@ -13,8 +13,8 @@ export default function ProjectScreen ({ navigation, route }) {
 
   let notionText = []
   if (route.params.notions) {
-    notionText = route.params.notions.map((item, index) => <Text key={index.toString()}>{item.name}
-      {index === (route.params.notions.length - 1) ? '' : ','}
+    let notionlist = route.params.notions.split(',');
+    notionText = notionlist.map((item, index) => <Text key={index.toString()}>{item}{index === (notionlist.length - 1) ? '' : ', '}
     </Text>)
   }
 
@@ -70,13 +70,14 @@ export default function ProjectScreen ({ navigation, route }) {
             navigation.push('NewProjectScreen', route.params)
           }}
         />
+        {route.params.complete == 0 ? (
         <Button 
           icon={ <Icon type='ionicon' name="ios-checkmark" containerStyle={styles.button} color='#4f99e3'/>} 
           type="outline" title="Complete" containerStyle={styles.button}
           onPress={() => {
             navigation.push('CompleteProjectScreen', route.params); 
           }}
-        />        
+        />) : []}      
         <Button 
           icon={ <Icon type='ionicon' name="ios-trash" containerStyle={styles.button} color='#4f99e3'/>} 
           type="outline" title="Delete" containerStyle={styles.button}

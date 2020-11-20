@@ -10,6 +10,7 @@ import NotionList, { reducer, initialState, actionCreators } from '../components
 const randomId = () => Math.random().toString()
 
 export default function NewProjectScreen ({ navigation, route }) {
+
   const pickImage = async () => {
     if (project_img.length >= 5) { return }
 
@@ -26,11 +27,21 @@ export default function NewProjectScreen ({ navigation, route }) {
     }
   }
 
-  const [state, dispatch] = useReducer(reducer, (route.params ? ({ list: route.params.notions }) : initialState))
-  const [project_title, setName] = useState(route.params ? (route.params.projectName) : '')
-  const [pattern_name, setPattern] = useState(route.params ? (route.params.patternName) : '')
-  const [project_yardage, setYardage] = useState(route.params ? (route.params.yardage) : '')
-  const [proj_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
+  /* Convert notion string to array of objects */
+  let fixedNotionList = []
+  if (route.params && route.params.notions)
+  {
+    let idx = 0;
+    route.params.notions.split(',').forEach( (notion) => {
+      fixedNotionList.push({id: idx.toString(), name: notion}); idx++;
+    });
+  }
+
+  const [project_title, setName] = useState(route.params && route.params.projectName ? (route.params.projectName) : '')
+  const [pattern_name, setPattern] = useState(route.params && route.params.patternName ? (route.params.patternName) : '')
+  const [state, dispatch] = useReducer(reducer, (route.params ? ({ list: fixedNotionList }) : initialState))
+  const [project_yardage, setYardage] = useState(route.params && route.params.yardage ? (route.params.yardage) : '')
+  const [proj_yard_frac, setYardPicker] = useState(route.params && route.params.yardfrac ? (route.params.yardfrac) : '')
   const [project_img, setImages] = useState(route.params && route.params.images ? (route.params.images.split(',')) : [])
   const [project_complete, setComplete] = useState(route.params ? (route.params.complete) : 0)
   const [notion, setNotion] = useState('')
@@ -146,15 +157,25 @@ export default function NewProjectScreen ({ navigation, route }) {
           onPress={() => {
             let joinedImg = ''
             if (project_img.length > 1) { joinedImg = project_img.join(',') } else { joinedImg = project_img[0] }
+            let NotionList = []
+            let joinedNotions = ''
+            if (state.list.length > 1) {
+              state.list.forEach( (notion) => {NotionList.push(notion.name)});
+              joinedNotions = NotionList.join(',');
+            } 
+            else {
+              joinedNotions = state.list[0].name;
+            }
+
             if (project_title === '' && pattern_name === '') { toggleOverlay() } else if (!route.params) {
               navigation.navigate('ProjectListScreen', {
                 action_type: types.ADD,
-                projectobj: createProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg, project_complete)
+                projectobj: createProject(project_title, pattern_name, joinedNotions, project_yardage, proj_yard_frac, joinedImg, project_complete)
               })
             } else {
               navigation.navigate('ProjectListScreen', {
                 action_type: types.MODIFY,
-                projectobj: editedProject(project_title, pattern_name, state.list, project_yardage, proj_yard_frac, joinedImg, project_complete)
+                projectobj: editedProject(project_title, pattern_name, joinedNotions, project_yardage, proj_yard_frac, joinedImg, project_complete)
               })
             }
           }}

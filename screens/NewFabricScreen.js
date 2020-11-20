@@ -30,12 +30,12 @@ export default function NewFabricScreen ({ navigation, route }) {
 
   /* All the hooks but no pan */
   const [fabric_name, setName] = useState(route.params ? (route.params.name) : '')
-  const [fabric_width, setWidth] = useState(route.params ? (route.params.width) : '')
-  const [fabric_yardage, setYardage] = useState(route.params ? (route.params.yardage) : '')
-  const [fabric_type, setType] = useState(route.params ? (route.params.type) : '')
-  const [fabric_fiber, setFiber] = useState(route.params ? (route.params.fiber) : '')
-  const [fabric_weight, setWeight] = useState(route.params ? (route.params.weight) : '')
-  const [fabric_yard_frac, setYardPicker] = useState(route.params ? (route.params.yardfrac) : '')
+  const [fabric_width, setWidth] = useState(route.params && route.params.width ? (route.params.width) : '')
+  const [fabric_yardage, setYardage] = useState(route.params && route.params.yardage ? (route.params.yardage) : '')
+  const [fabric_type, setType] = useState(route.params && route.params.type ? (route.params.type) : '')
+  const [fabric_fiber, setFiber] = useState(route.params && route.params.fiber ? (route.params.fiber) : '')
+  const [fabric_weight, setWeight] = useState(route.params && route.params.weight ? (route.params.weight) : '')
+  const [fabric_yard_frac, setYardPicker] = useState(route.params && route.params.yardfrac ? (route.params.yardfrac) : '')
   const [filtered_types, setFilteredTypes] = useState([])
   const [filtered_fibers, setFilteredFibers] = useState([])
   const [fabric_img, setImage] = useState(route.params ? (route.params.image) : null)

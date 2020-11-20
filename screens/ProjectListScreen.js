@@ -30,12 +30,13 @@ export function reducer (state, action) {
               project_id, \
               pattern_name,\
               project_title,\
+              project_notions,\
               project_yards,\
               project_yard_frac, \
               project_img, \
               project_complete) \
-            VALUES (?,?,?,?,?,?,?)',
-            [projobj.id, projobj.projectName, projobj.patternName, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete],
+            VALUES (?,?,?,?,?,?,?,?)',
+            [projobj.id, projobj.patternName, projobj.projectName, projobj.notions, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete],
             (tx, results) => { console.log("Added to table") },
             (tx, error) => { console.log(error) },       
           )
@@ -44,10 +45,31 @@ export function reducer (state, action) {
         state.projectlist[0].data.push(action.payload)
         return { ...state }
       }
-      break
+      break;
     }
     case types.MODIFY: {
-      state.projectlist[0].data.map((item) => item.id === action.payload.id ? action.payload : item)
+      const projobj = action.payload
+      bobbinDb.transaction(function (tx) {
+        tx.executeSql(
+          'UPDATE projectTable\
+            SET pattern_name=?,\
+            project_title=?,\
+            project_notions=?,\
+            project_yards=?,\
+            project_yard_frac=?,\
+            project_img=?,\
+            project_complete=? \
+           WHERE project_id=?',
+          [projobj.patternName, projobj.projectName, projobj.notions, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete, projobj.id],
+          (tx, results) => {
+            console.log('Modified')
+          },
+          (tx, error) => {
+            console.log(error)
+          }
+        )
+      })
+      state.projectlist[0].data = state.projectlist[0].data.map((item) => item.id === action.payload.id ? action.payload : item)
       return { ...state }
       // return { ...state, projectlist: state.projectlist.map((item) => item.id === action.payload.id ? action.payload : item)}
     }
@@ -69,7 +91,20 @@ export function reducer (state, action) {
       state.projectlist[0].data = state.projectlist[0].data.filter((item) => item.id !== action.payload);
       tmp.complete = 1;
       state.projectlist[1].data.push(tmp)
-        //TODO DB MODIFY COMPLETE
+      bobbinDb.transaction(function (tx) {
+        tx.executeSql(
+          'UPDATE projectTable\
+            SET project_complete=? \
+           WHERE project_id=?',
+          [1, action.payload],
+          (tx, results) => {
+            console.log('Completed')
+          },
+          (tx, error) => {
+            console.log(error)
+          }
+        )
+      })
       return { ...state };
     }
   }
@@ -77,11 +112,12 @@ export function reducer (state, action) {
 
 export default function ProjectListScreen ({ navigation, route }) {
   function projectInit (arg) {
-    const createProject = (project_id, project_title, pattern_name, project_yardage, proj_yard_frac, project_img, project_complete) => (
+    const createProject = (project_id, project_title, pattern_name, project_notions, project_yardage, proj_yard_frac, project_img, project_complete) => (
       {
         id: project_id,
         projectName: project_title,
         patternName: pattern_name,
+        notions: project_notions,
         yardage: project_yardage,
         yardfrac: proj_yard_frac,
         images: project_img,
@@ -114,13 +150,13 @@ export default function ProjectListScreen ({ navigation, route }) {
             const item = results.rows.item(i);
             if (!item.project_complete) {
               if (projectInitialState.projectlist[0].data.every((proj) => proj.id !== item.project_id)) {
-                projectInitialState.projectlist[0].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_yardage,
-                  item.proj_yard_frac, item.project_img, item.project_complete))
+                projectInitialState.projectlist[0].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_notions,
+                  item.project_yardage, item.proj_yard_frac, item.project_img, item.project_complete))
               }
             } else {
               if (projectInitialState.projectlist[1].data.every((proj) => proj.id !== item.project_id)) {
-                projectInitialState.projectlist[1].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_yardage,
-                  item.proj_yard_frac, item.project_img, item.project_complete))
+                projectInitialState.projectlist[1].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_notions,
+                  item.project_yardage, item.proj_yard_frac, item.project_img, item.project_complete))
               }
             }
           }
@@ -194,7 +230,7 @@ export default function ProjectListScreen ({ navigation, route }) {
           )
         }}
         renderSectionHeader={({ section }) => (
-          <Text>{section.title}</Text>
+          <Text style={styles.header}>{section.title}</Text>
         )}
         keyExtractor={(item) => item.id}
       />
@@ -216,6 +252,12 @@ const styles = StyleSheet.create({
   },
   flexrow: {
     flexDirection: 'row'
+  },
+  header: {
+    fontFamily: 'SpaceMono-Regular',
+    fontSize: 15,
+    textAlign: 'center',
+    borderBottomWidth: 1,
   },
   addicon: {
     padding: 10,
