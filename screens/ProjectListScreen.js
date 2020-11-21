@@ -9,14 +9,16 @@ export const types = {
   ADD: 'ADD',
   MODIFY: 'MODIFY',
   DELETE: 'DELETE',
-  COMPLETE: 'COMPLETE'
+  COMPLETE: 'COMPLETE',
+  UNCOMPLETE: 'UNCOMPLETE'
 }
 
 const actionCreators = {
   add: (proj) => ({ type: types.ADD, payload: proj }),
   modify: (proj) => ({ type: types.MODIFY, payload: proj }),
   delete: (id) => ({ type: types.DELETE, payload: id }),
-  complete: (id) => ({ type: types.COMPLETE, payload: id })
+  complete: (id) => ({ type: types.COMPLETE, payload: id }),
+  uncomplete: (id) => ({ type: types.UNCOMPLETE, payload: id })
 }
 
 export function reducer (state, action) {
@@ -70,7 +72,6 @@ export function reducer (state, action) {
       state.projectlist[0].data = state.projectlist[0].data.map((item) => item.id === action.payload.id ? action.payload : item)
       state.projectlist[1].data = state.projectlist[1].data.map((item) => item.id === action.payload.id ? action.payload : item)
       return { ...state }
-      // return { ...state, projectlist: state.projectlist.map((item) => item.id === action.payload.id ? action.payload : item)}
     }
     case types.DELETE: {
       bobbinDb.transaction(function (tx) {
@@ -83,8 +84,7 @@ export function reducer (state, action) {
       })
       state.projectlist[0].data = state.projectlist[0].data.filter((item) => item.id !== action.payload)
       state.projectlist[1].data = state.projectlist[1].data.filter((item) => item.id !== action.payload)
-      return {...state}
-      //return {...state, projectlist: state.projectlist.filter((item) => item.id !== action.payload)}
+      return { ...state }
     }
     case types.COMPLETE: {
       let tmp = state.projectlist[0].data.find((item) => item.id === action.payload);
@@ -97,6 +97,25 @@ export function reducer (state, action) {
             SET project_complete=? \
            WHERE project_id=?',
           [1, action.payload],
+          (tx, results) => {},
+          (tx, error) => {
+            console.log(error)
+          }
+        )
+      })
+      return { ...state };
+    }
+    case types.UNCOMPLETE: {
+      let tmp = state.projectlist[1].data.find((item) => item.id === action.payload);
+      state.projectlist[1].data = state.projectlist[1].data.filter((item) => item.id !== action.payload);
+      tmp.complete = 0;
+      state.projectlist[0].data.push(tmp)
+      bobbinDb.transaction(function (tx) {
+        tx.executeSql(
+          'UPDATE projectTable\
+            SET project_complete=? \
+           WHERE project_id=?',
+          [0, action.payload],
           (tx, results) => {},
           (tx, error) => {
             console.log(error)
@@ -189,6 +208,9 @@ export default function ProjectListScreen ({ navigation, route }) {
         case types.COMPLETE:
           dispatch(actionCreators.complete(route.params.projectid))
           break
+        case types.UNCOMPLETE:
+          dispatch(actionCreators.uncomplete(route.params.projectid))
+          break
       }
     }
   }, [route.params])
@@ -198,7 +220,6 @@ export default function ProjectListScreen ({ navigation, route }) {
   }
 
   if (!ready) {
-    console.log('loading')
     return null
   }
 

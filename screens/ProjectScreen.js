@@ -37,7 +37,6 @@ export default function ProjectScreen ({ navigation, route }) {
       )
     })
   }
-
   return (
     <View>
       <ScrollView horizontal>
@@ -84,7 +83,15 @@ export default function ProjectScreen ({ navigation, route }) {
           onPress={() => {
             navigation.push('CompleteProjectScreen', route.params); 
           }}
-        />) : []}      
+        />) : []}
+        {route.params.complete == 1 ? (
+        <Button 
+          icon={ <Icon type='ionicon' name="ios-hammer" containerStyle={styles.button} color='#4f99e3'/>} 
+          type="outline" title="Mark In Progress" containerStyle={styles.button}
+          onPress={() => {
+            navigation.navigate('ProjectListScreen', {action_type: types.UNCOMPLETE, projectid: route.params.id}); 
+          }}
+        />) : []}           
         <Button 
           icon={ <Icon type='ionicon' name="ios-trash" containerStyle={styles.button} color='#4f99e3'/>} 
           type="outline" title="Delete" containerStyle={styles.button}
