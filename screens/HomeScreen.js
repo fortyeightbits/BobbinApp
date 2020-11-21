@@ -11,6 +11,7 @@ export const bobbinDb = SQLite.openDatabase('BobbinDatabase.db')
 export default function HomeScreen ({ navigation, route }) {
   const [fabricCnt, setFabricCnt] = useState(0)
   const [projCnt, setProjCnt] = useState(0)
+  const [projDoneCnt, setProjDoneCnt] = useState(0)
   const isFocused = useIsFocused()
 
   const [fontsLoaded] = useFonts({
@@ -85,6 +86,7 @@ export default function HomeScreen ({ navigation, route }) {
     );
   });
 */
+
   if (isFocused) {
     bobbinDb.transaction(function (tx) {
       tx.executeSql(
@@ -102,7 +104,17 @@ export default function HomeScreen ({ navigation, route }) {
         'SELECT * FROM projectTable',
         [],
         (tx, results) => {
-          setProjCnt(results.rows.length)
+          let x = 0;
+          let y = 0;
+          for (let i = 0; i < results.rows.length; i++) {
+            const item = results.rows.item(i);
+            if (!item.project_complete)
+              x++;
+            else
+              y++;
+          }
+          setProjCnt(x);
+          setProjDoneCnt(y);
         },
         (tx, error) => console.log(error)
       )
@@ -123,7 +135,8 @@ export default function HomeScreen ({ navigation, route }) {
       <Card>
         <Card.Title style={styles.headerTitleStyle}>Projects</Card.Title>
         <Card.Divider />
-        <Text style={styles.cardtext}>{'You have ' + projCnt + ' ' + (projCnt > 1 ? 'projects' : 'project') + ' in progress.'}</Text>
+        <Text style={styles.cardtext}>{'You have ' + projCnt + ' ' + (projCnt > 1 ? 'projects' : 'project') + ' in progress and ' 
+        + projDoneCnt + ' ' + (projDoneCnt > 1 ? 'projects' : 'project') + ' completed.'}</Text>
         <Button
           type='outline' title='Go to Project List' titleStyle={styles.buttonText}
           onPress={() => navigation.push('ProjectNav')}

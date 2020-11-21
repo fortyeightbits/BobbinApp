@@ -33,10 +33,10 @@ export default function FabricScreen ({ navigation, route }) {
         {route.params.yardage || route.params.yardfrac ? (
           <View style={styles.flexrow}>
             <Text style={styles.paramtext}>Length </Text>
-            <Text style={styles.infotext}>{route.params.yardage + ' '}</Text>
+            <Text style={styles.infotext}>{route.params.yardage + ' '}
             {route.params.yardfrac ? (
-              <Text style={styles.infotext}>{route.params.yardfrac}</Text>) : []}
-            <Text> yards</Text>
+              <Text style={styles.infotext}>{route.params.yardfrac + ' '}</Text>) : []}
+            yards</Text>
           </View>) : []}
         {route.params.fiber ? (
           <View style={styles.flexrow}>

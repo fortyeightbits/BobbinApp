@@ -16,7 +16,7 @@ export default function NewProjectScreen ({ navigation, route }) {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: false,
+      allowsEditing: true,
       quality: 1
     })
 
@@ -144,7 +144,7 @@ export default function NewProjectScreen ({ navigation, route }) {
             numColumns={5}
             renderItem={({ item }) => {
               return (
-                <Image source={{ width: 65, height: 65, uri: item }} style={{ marginRight: 5 }} />
+                <Image source={{ width: 65, height: 65, uri: item }} style={{ marginRight: 5, marginBottom: 5 }} />
               )
             }}
           />
@@ -156,14 +156,14 @@ export default function NewProjectScreen ({ navigation, route }) {
           type='outline' title={route.params ? 'Save Project' : 'Add Project'} containerStyle={styles.button}
           onPress={() => {
             let joinedImg = ''
-            if (project_img.length > 1) { joinedImg = project_img.join(',') } else { joinedImg = project_img[0] }
+            if (project_img.length > 1) { joinedImg = project_img.join(',') } else if (project_img.length == 1) { joinedImg = project_img[0] }
             let NotionList = []
             let joinedNotions = ''
             if (state.list.length > 1) {
               state.list.forEach( (notion) => {NotionList.push(notion.name)});
               joinedNotions = NotionList.join(',');
             } 
-            else {
+            else if (state.list.length == 1){
               joinedNotions = state.list[0].name;
             }
 
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   uploadbutton: {
-    marginLeft: 30,
-    marginRight: 30
+    marginLeft: 50,
+    marginRight: 50
   },
   upload: {
     padding: 10,

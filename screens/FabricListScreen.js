@@ -21,7 +21,6 @@ export function reducer (state, action) {
   switch (action.type) {
     case types.ADD: {
       if (state.inventory.every((item) => item.id !== action.payload.id)) {
-        console.log('Adding')
         const fabricobj = action.payload
         bobbinDb.transaction(function (tx) {
           tx.executeSql(
@@ -38,7 +37,7 @@ export function reducer (state, action) {
             VALUES (?,?,?,?,?,?,?,?,?)',
             [fabricobj.id, fabricobj.name, fabricobj.width, fabricobj.yardage, fabricobj.yardfrac,
               fabricobj.type, fabricobj.fiber, fabricobj.weight, fabricobj.image],
-            (tx, results) => { console.log('Added to table') },
+            (tx, results) => {},
             (tx, error) => { console.log(error) }
           )
         })
@@ -47,7 +46,6 @@ export function reducer (state, action) {
       break;
     }
     case types.MODIFY: {
-      console.log('Modifying')
       const fabricobj = action.payload
       bobbinDb.transaction(function (tx) {
         tx.executeSql(
@@ -63,11 +61,9 @@ export function reducer (state, action) {
            WHERE fabric_id=?',
           [fabricobj.name, fabricobj.width, fabricobj.yardage, fabricobj.yardfrac,
             fabricobj.type, fabricobj.fiber, fabricobj.weight, fabricobj.image, fabricobj.id],
-          (tx, results) => {
-            console.log('Modified ', results.rowsAffected)
-          },
+          (tx, results) => {},
           (tx, error) => {
-            console.log('Error ', error)
+            console.log(error)
           }
         )
       })
@@ -155,12 +151,11 @@ export default function FabricListScreen ({ navigation, route }) {
   }
 
   if (!ready) {
-    console.log('loading')
     return null
   }
 
-  console.log('render')
-  console.log(state.inventory)
+  //console.log('render')
+  //console.log(state.inventory)
   return (
     <View style={styles.container}>
       <FlatList
@@ -202,7 +197,6 @@ const styles = StyleSheet.create({
   },
   fabricdes: {
     padding: 15,
-    backgroundColor: '#e9f2f5',
     fontFamily: 'Proxima',
     fontSize: 15,
     textTransform: 'lowercase',

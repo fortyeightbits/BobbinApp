@@ -110,7 +110,7 @@ export default function NewFabricScreen ({ navigation, route }) {
         </View>
         <View style={styles.flexrow}>
           <Input containerStyle={[styles.input, { width: 130 }]} maxLength={3} keyboardType='number-pad' value={fabric_width.toString()} onChangeText={(value) => setWidth(value)} />
-          <Input containerStyle={[styles.input, { paddingLeft: 55, width: 128 }]} maxLength={4} keyboardType='number-pad' value={fabric_yardage.toString()} onChangeText={(value) => setYardage(value)} />
+          <Input containerStyle={[styles.input, { paddingLeft: 35, width: 100 }]} maxLength={4} keyboardType='number-pad' value={fabric_yardage.toString()} onChangeText={(value) => setYardage(value)} />
           <Picker
             selectedValue={fabric_yard_frac} style={styles.yarddropdown} mode='dropdown'
             onValueChange={(itemValue) => setYardPicker(itemValue)}

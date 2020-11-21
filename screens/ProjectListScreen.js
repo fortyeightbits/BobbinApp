@@ -37,7 +37,7 @@ export function reducer (state, action) {
               project_complete) \
             VALUES (?,?,?,?,?,?,?,?)',
             [projobj.id, projobj.patternName, projobj.projectName, projobj.notions, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete],
-            (tx, results) => { console.log("Added to table") },
+            (tx, results) => {},
             (tx, error) => { console.log(error) },       
           )
         })
@@ -61,15 +61,14 @@ export function reducer (state, action) {
             project_complete=? \
            WHERE project_id=?',
           [projobj.patternName, projobj.projectName, projobj.notions, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete, projobj.id],
-          (tx, results) => {
-            console.log('Modified')
-          },
+          (tx, results) => {},
           (tx, error) => {
             console.log(error)
           }
         )
       })
       state.projectlist[0].data = state.projectlist[0].data.map((item) => item.id === action.payload.id ? action.payload : item)
+      state.projectlist[1].data = state.projectlist[1].data.map((item) => item.id === action.payload.id ? action.payload : item)
       return { ...state }
       // return { ...state, projectlist: state.projectlist.map((item) => item.id === action.payload.id ? action.payload : item)}
     }
@@ -83,6 +82,7 @@ export function reducer (state, action) {
         )
       })
       state.projectlist[0].data = state.projectlist[0].data.filter((item) => item.id !== action.payload)
+      state.projectlist[1].data = state.projectlist[1].data.filter((item) => item.id !== action.payload)
       return {...state}
       //return {...state, projectlist: state.projectlist.filter((item) => item.id !== action.payload)}
     }
@@ -97,9 +97,7 @@ export function reducer (state, action) {
             SET project_complete=? \
            WHERE project_id=?',
           [1, action.payload],
-          (tx, results) => {
-            console.log('Completed')
-          },
+          (tx, results) => {},
           (tx, error) => {
             console.log(error)
           }
@@ -144,19 +142,19 @@ export default function ProjectListScreen ({ navigation, route }) {
         'SELECT * FROM projectTable',
         [],
         (tx, results) => {
-          console.log('projectInit results')
-          console.log(results)
+          //console.log('projectInit results')
+          //console.log(results)
           for (let i = 0; i < results.rows.length; i++) {
             const item = results.rows.item(i);
             if (!item.project_complete) {
               if (projectInitialState.projectlist[0].data.every((proj) => proj.id !== item.project_id)) {
                 projectInitialState.projectlist[0].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_notions,
-                  item.project_yardage, item.proj_yard_frac, item.project_img, item.project_complete))
+                  item.project_yards, item.proj_yard_frac, item.project_img, item.project_complete))
               }
             } else {
               if (projectInitialState.projectlist[1].data.every((proj) => proj.id !== item.project_id)) {
                 projectInitialState.projectlist[1].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_notions,
-                  item.project_yardage, item.proj_yard_frac, item.project_img, item.project_complete))
+                  item.project_yards, item.proj_yard_frac, item.project_img, item.project_complete))
               }
             }
           }
@@ -257,7 +255,8 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono-Regular',
     fontSize: 15,
     textAlign: 'center',
-    borderBottomWidth: 1,
+    backgroundColor: '#4f99e3',
+    color: 'white',
   },
   addicon: {
     padding: 10,
@@ -275,7 +274,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingTop: 15,
     paddingBottom: 15,
-    backgroundColor: '#e9f2f5'
   },
   projectname: {
     fontFamily: 'Proxima',

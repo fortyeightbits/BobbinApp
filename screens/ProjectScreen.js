@@ -1,8 +1,8 @@
-import React from 'react'
-import { Image, Text, View, StyleSheet, ScrollView, Dimensions } from 'react-native'
+import React, { useState } from 'react'
+import { Image, Text, View, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
 import { useFonts } from 'expo-font'
 import { AppLoading } from 'expo'
-import { Icon, Button } from 'react-native-elements'
+import { Icon, Button, Overlay } from 'react-native-elements'
 import { types } from './ProjectListScreen'
 
 export default function ProjectScreen ({ navigation, route }) {
@@ -10,6 +10,10 @@ export default function ProjectScreen ({ navigation, route }) {
     'SpaceMono-Regular': require('../assets/fonts/SpaceMono-Regular.ttf'),
     Proxima: require('../assets/fonts/ProximaNova-Regular.otf')
   })
+
+  const [visible, setVisible] = useState(false)
+  const [currImg, setImg] = useState('')
+  const toggleOverlay = () => { setVisible(!visible) }
 
   let notionText = []
   if (route.params.notions) {
@@ -26,8 +30,11 @@ export default function ProjectScreen ({ navigation, route }) {
   if (route.params.images) {
     const splitImg = route.params.images.split(',')
     projImg = splitImg.map((img, index) => {
-      console.log(img)
-      return <Image key={index.toString()} resizeMode='cover' style={[splitImg.length == 1 ? styles.singleimage : styles.image]} source={{ uri: img }} />
+      return (
+      <TouchableOpacity onPress={()=> {toggleOverlay(); setImg(img);}}>
+      <Image key={index.toString()} resizeMode='cover' style={[splitImg.length == 1 ? styles.singleimage : styles.image]} source={{ uri: img }} />
+      </TouchableOpacity>
+      )
     })
   }
 
@@ -50,10 +57,10 @@ export default function ProjectScreen ({ navigation, route }) {
         {route.params.yardage || route.params.yardfrac ? (
           <View style={styles.flexrow}>
             <Text style={styles.paramtext}>Yardage </Text>
-            <Text style={styles.infotext}>{route.params.yardage + ' '}</Text>
+            <Text style={styles.infotext}>{route.params.yardage + ' '}
             {route.params.yardfrac ? (
-              <Text style={styles.infotext}>{route.params.yardfrac}</Text>) : []}
-            <Text> yards</Text>
+              <Text style={styles.infotext}>{route.params.yardfrac + ' '}</Text>) : []}
+            yards</Text>
           </View>) : []}
         {route.params.notions.length ? (
           <View style={styles.flexrow}>
@@ -86,6 +93,11 @@ export default function ProjectScreen ({ navigation, route }) {
           }}
         />
       </View>
+
+    <Overlay isVisible={visible} onBackdropPress={toggleOverlay} overlayStyle={{ padding: 10, margin: 10 }}>
+      <Image resizeMode='contain' style={styles.overlay} source={{ uri: currImg }} />
+    </Overlay>
+
     </View>
   )
 }
@@ -126,6 +138,11 @@ const styles = StyleSheet.create({
   singleimage: {
     height: 300,
     width: Dimensions.get('window').width
+  },
+  overlay: {
+    width: Dimensions.get('window').width,
+    height: 400
+
   },
   info: {
     padding: 20

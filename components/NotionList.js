@@ -5,10 +5,7 @@ import { FlatList, Text, View, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export const initialState = {
-  list: [
-    { id: '0', name: 'Green thread' },
-    { id: '1', name: '22" zipper' },
-  ],
+  list: [],
 }
 
 export const types = {
