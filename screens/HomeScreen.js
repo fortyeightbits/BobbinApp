@@ -41,7 +41,7 @@ export default function HomeScreen ({ navigation, route }) {
     )
   })
 
-  /*
+/*
   bobbinDb.transaction((tx) => {
     tx.executeSql(
       'DROP TABLE IF EXISTS projectTable',[]
@@ -56,8 +56,10 @@ export default function HomeScreen ({ navigation, route }) {
         pattern_name VARCHAR(64) NOT NULL, \
         project_title VARCHAR(64) NOT NULL, \
         project_notions VARCHAR(64), \
-        project_yards VARCHAR(64) NOT NULL, \
-        project_yard_frac VARCHAR(64) NOT NULL, \
+        project_yards_wide VARCHAR(64) NOT NULL, \
+        project_yard_frac_wide VARCHAR(64) NOT NULL, \
+        project_yards_narrow VARCHAR(64) NOT NULL, \
+        project_yard_frac_narrow VARCHAR(64) NOT NULL, \
         project_img VARCHAR(64), \
         project_complete INTEGER \
         )',

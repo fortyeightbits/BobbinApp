@@ -33,12 +33,15 @@ export function reducer (state, action) {
               pattern_name,\
               project_title,\
               project_notions,\
-              project_yards,\
-              project_yard_frac, \
+              project_yards_narrow,\
+              project_yard_frac_narrow, \
+              project_yards_wide,\
+              project_yard_frac_wide, \
               project_img, \
               project_complete) \
-            VALUES (?,?,?,?,?,?,?,?)',
-            [projobj.id, projobj.patternName, projobj.projectName, projobj.notions, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete],
+            VALUES (?,?,?,?,?,?,?,?,?,?)',
+            [projobj.id, projobj.patternName, projobj.projectName, projobj.notions, projobj.yardagenarrow, projobj.yardfracnarrow, projobj.yardagewide, projobj.yardfracwide, 
+              projobj.images, projobj.complete],
             (tx, results) => {},
             (tx, error) => { console.log(error) },       
           )
@@ -57,12 +60,15 @@ export function reducer (state, action) {
             SET pattern_name=?,\
             project_title=?,\
             project_notions=?,\
-            project_yards=?,\
-            project_yard_frac=?,\
+            project_yards_narrow=?,\
+            project_yard_frac_narrow=?, \
+            project_yards_wide=?,\
+            project_yard_frac_wide=?, \
             project_img=?,\
             project_complete=? \
            WHERE project_id=?',
-          [projobj.patternName, projobj.projectName, projobj.notions, projobj.yardage, projobj.yardfrac, projobj.images, projobj.complete, projobj.id],
+          [projobj.patternName, projobj.projectName, projobj.notions, projobj.yardagenarrow, projobj.yardfracnarrow, projobj.yardagewide, projobj.yardfracwide, 
+            projobj.images, projobj.complete, projobj.id],
           (tx, results) => {},
           (tx, error) => {
             console.log(error)
@@ -129,14 +135,17 @@ export function reducer (state, action) {
 
 export default function ProjectListScreen ({ navigation, route }) {
   function projectInit (arg) {
-    const createProject = (project_id, project_title, pattern_name, project_notions, project_yardage, proj_yard_frac, project_img, project_complete) => (
+    const createProject = (project_id, project_title, pattern_name, project_notions, project_yardage_narrow, 
+      project_yard_frac_narrow, project_yardage_wide, project_yard_frac_wide, project_img, project_complete) => (
       {
         id: project_id,
         projectName: project_title,
         patternName: pattern_name,
         notions: project_notions,
-        yardage: project_yardage,
-        yardfrac: proj_yard_frac,
+        yardagenarrow: project_yardage_narrow,
+        yardfracnarrow: project_yard_frac_narrow,
+        yardagewide: project_yardage_wide,
+        yardfracwide: project_yard_frac_wide,
         images: project_img,
         complete: project_complete
       })
@@ -168,12 +177,12 @@ export default function ProjectListScreen ({ navigation, route }) {
             if (!item.project_complete) {
               if (projectInitialState.projectlist[0].data.every((proj) => proj.id !== item.project_id)) {
                 projectInitialState.projectlist[0].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_notions,
-                  item.project_yards, item.proj_yard_frac, item.project_img, item.project_complete))
+                  item.project_yards_narrow, item.project_yard_frac_narrow, item.project_yards_wide, item.project_yard_frac_wide, item.project_img, item.project_complete))
               }
             } else {
               if (projectInitialState.projectlist[1].data.every((proj) => proj.id !== item.project_id)) {
                 projectInitialState.projectlist[1].data.push(createProject(item.project_id, item.project_title, item.pattern_name, item.project_notions,
-                  item.project_yards, item.proj_yard_frac, item.project_img, item.project_complete))
+                  item.project_yards_narrow, item.project_yard_frac_narrow, item.project_yards_wide, item.project_yard_frac_wide, item.project_img, item.project_complete))
               }
             }
           }

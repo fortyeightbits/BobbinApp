@@ -45,25 +45,33 @@ export default function ProjectScreen ({ navigation, route }) {
       <View style={styles.info}>
         {route.params.projectName ? (
           <View style={styles.flexrow}>
-            <Text style={styles.paramtext}>Name     </Text>
+            <Text style={styles.paramtext}>Name             </Text>
             <Text style={styles.infotext}>{route.params.projectName}</Text>
           </View>) : []}
         {route.params.patternName ? (
           <View style={styles.flexrow}>
-            <Text style={styles.paramtext}>Pattern   </Text>
+            <Text style={styles.paramtext}>Pattern           </Text>
             <Text style={styles.infotext}>{route.params.patternName}</Text>
           </View>) : []}
-        {route.params.yardage || route.params.yardfrac ? (
+        {route.params.yardagenarrow || route.params.yardfracnarrow ? (
           <View style={styles.flexrow}>
-            <Text style={styles.paramtext}>Yardage </Text>
-            <Text style={styles.infotext}>{route.params.yardage + ' '}
-            {route.params.yardfrac ? (
-              <Text style={styles.infotext}>{route.params.yardfrac + ' '}</Text>) : []}
+            <Text style={styles.paramtext}>Yardage [45"]</Text>
+            <Text style={styles.infotext}>{route.params.yardagenarrow + ' '}
+            {route.params.yardfracnarrow ? (
+              <Text style={styles.infotext}>{route.params.yardfracnarrow + ' '}</Text>) : []}
             yards</Text>
           </View>) : []}
+          {route.params.yardagewide || route.params.yardfracwide ? (
+          <View style={styles.flexrow}>
+            <Text style={styles.paramtext}>Yardage [60"]</Text>
+            <Text style={styles.infotext}>{route.params.yardagewide + ' '}
+            {route.params.yardfracwide ? (
+              <Text style={styles.infotext}>{route.params.yardfracwide + ' '}</Text>) : []}
+            yards</Text>
+          </View>) : []}          
         {route.params.notions.length ? (
           <View style={styles.flexrow}>
-            <Text style={styles.paramtext}>Notions  </Text>
+            <Text style={styles.paramtext}>Notions          </Text>
             <Text style={styles.infotext}>{notionText}</Text>
           </View>) : []}
       </View>

@@ -40,8 +40,10 @@ export default function NewProjectScreen ({ navigation, route }) {
   const [project_title, setName] = useState(route.params && route.params.projectName ? (route.params.projectName) : '')
   const [pattern_name, setPattern] = useState(route.params && route.params.patternName ? (route.params.patternName) : '')
   const [state, dispatch] = useReducer(reducer, (route.params ? ({ list: fixedNotionList }) : initialState))
-  const [project_yardage, setYardage] = useState(route.params && route.params.yardage ? (route.params.yardage) : '')
-  const [proj_yard_frac, setYardPicker] = useState(route.params && route.params.yardfrac ? (route.params.yardfrac) : '')
+  const [project_yardage_narrow, setNarrowYardage] = useState(route.params && route.params.yardagenarrow ? (route.params.yardagenarrow) : '')
+  const [proj_yard_frac_narrow, setNarrowYardPicker] = useState(route.params && route.params.yardfracnarrow ? (route.params.yardfracnarrow) : '')
+  const [project_yardage_wide, setWideYardage] = useState(route.params && route.params.yardagewide ? (route.params.yardagewide) : '')
+  const [proj_yard_frac_wide, setWideYardPicker] = useState(route.params && route.params.yardfracwide ? (route.params.yardfracwide) : '')
   const [project_img, setImages] = useState(route.params && route.params.images ? (route.params.images.split(',')) : [])
   const [project_complete, setComplete] = useState(route.params ? (route.params.complete) : 0)
   const [notion, setNotion] = useState('')
@@ -51,24 +53,30 @@ export default function NewProjectScreen ({ navigation, route }) {
   const [visible, setVisible] = useState(false)
   const toggleOverlay = () => { setVisible(!visible) }
 
-  const createProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img, project_complete) => (
+  const createProject = (project_title, pattern_name, notionlist, project_yardage_narrow, proj_yard_frac_narrow, project_yardage_wide, proj_yard_frac_wide,
+    project_img, project_complete) => (
     {
       id: randomId(),
       projectName: project_title,
       patternName: pattern_name,
-      yardage: project_yardage,
-      yardfrac: proj_yard_frac,
+      yardagenarrow: project_yardage_narrow,
+      yardfracnarrow: proj_yard_frac_narrow,
+      yardagewide: project_yardage_wide,
+      yardfracwide: proj_yard_frac_wide,
       notions: notionlist,
       images: project_img,
       complete: project_complete
     })
-  const editedProject = (project_title, pattern_name, notionlist, project_yardage, proj_yard_frac, project_img, project_complete) => (
+  const editedProject = (project_title, pattern_name, notionlist, project_yardage_narrow, proj_yard_frac_narrow, project_yardage_wide, proj_yard_frac_wide,
+    project_img, project_complete) => (
     {
       id: route.params.id,
       projectName: project_title,
       patternName: pattern_name,
-      yardage: project_yardage,
-      yardfrac: proj_yard_frac,
+      yardagenarrow: project_yardage_narrow,
+      yardfracnarrow: proj_yard_frac_narrow,
+      yardagewide: project_yardage_wide,
+      yardfracwide: proj_yard_frac_wide,
       notions: notionlist,
       images: project_img,
       complete: project_complete
@@ -110,11 +118,11 @@ export default function NewProjectScreen ({ navigation, route }) {
         <View style={styles.flexrow}>
           <Input
             containerStyle={[styles.input, { width: 128 }]} maxLength={4} keyboardType='number-pad'
-            value={project_yardage.toString()} onChangeText={(value) => setYardage(value)}
+            value={project_yardage_narrow.toString()} onChangeText={(value) => setNarrowYardage(value)}
           />
           <Picker
-            selectedValue={proj_yard_frac} style={styles.yarddropdown} mode='dropdown'
-            onValueChange={(itemValue) => setYardPicker(itemValue)}
+            selectedValue={proj_yard_frac_narrow} style={styles.yarddropdown} mode='dropdown'
+            onValueChange={(itemValue) => setNarrowYardPicker(itemValue)}
           >
             <Picker.Item label='' value='' />
             <Picker.Item label='1/8' value='1/8' />
@@ -125,7 +133,28 @@ export default function NewProjectScreen ({ navigation, route }) {
             <Picker.Item label='3/4' value='3/4' />
             <Picker.Item label='7/8' value='7/8' />
           </Picker>
+          <Text>[45 inches]</Text>
         </View>
+        <View style={styles.flexrow}>
+          <Input
+            containerStyle={[styles.input, { width: 128 }]} maxLength={4} keyboardType='number-pad'
+            value={project_yardage_wide.toString()} onChangeText={(value) => setWideYardage(value)}
+          />
+          <Picker
+            selectedValue={proj_yard_frac_wide} style={styles.yarddropdown} mode='dropdown'
+            onValueChange={(itemValue) => setWideYardPicker(itemValue)}
+          >
+            <Picker.Item label='' value='' />
+            <Picker.Item label='1/8' value='1/8' />
+            <Picker.Item label='1/4' value='1/4' />
+            <Picker.Item label='3/8' value='3/8' />
+            <Picker.Item label='1/2' value='1/2' />
+            <Picker.Item label='5/8' value='5/8' />
+            <Picker.Item label='3/4' value='3/4' />
+            <Picker.Item label='7/8' value='7/8' />
+          </Picker>
+          <Text>[60 inches]</Text>
+        </View>        
         <Text style={styles.paramtext}>Notions</Text>
         <Input
           style={styles.notioninput} placeholder='Add a notion and hit enter' value={notion} onChangeText={(value) => setNotion(value)}
@@ -170,12 +199,14 @@ export default function NewProjectScreen ({ navigation, route }) {
             if (project_title === '' && pattern_name === '') { toggleOverlay() } else if (!route.params) {
               navigation.navigate('ProjectListScreen', {
                 action_type: types.ADD,
-                projectobj: createProject(project_title, pattern_name, joinedNotions, project_yardage, proj_yard_frac, joinedImg, project_complete)
+                projectobj: createProject(project_title, pattern_name, joinedNotions, project_yardage_narrow, proj_yard_frac_narrow, project_yardage_wide, proj_yard_frac_wide, 
+                  joinedImg, project_complete)
               })
             } else {
               navigation.navigate('ProjectListScreen', {
                 action_type: types.MODIFY,
-                projectobj: editedProject(project_title, pattern_name, joinedNotions, project_yardage, proj_yard_frac, joinedImg, project_complete)
+                projectobj: editedProject(project_title, pattern_name, joinedNotions, project_yardage_narrow, proj_yard_frac_narrow, project_yardage_wide, proj_yard_frac_wide, 
+                  joinedImg, project_complete)
               })
             }
           }}
