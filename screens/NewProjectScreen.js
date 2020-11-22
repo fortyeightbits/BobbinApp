@@ -133,7 +133,7 @@ export default function NewProjectScreen ({ navigation, route }) {
             <Picker.Item label='3/4' value='3/4' />
             <Picker.Item label='7/8' value='7/8' />
           </Picker>
-          <Text>[45 inches]</Text>
+          <Text style={styles.paramtext}>45 inches</Text>
         </View>
         <View style={styles.flexrow}>
           <Input
@@ -153,7 +153,7 @@ export default function NewProjectScreen ({ navigation, route }) {
             <Picker.Item label='3/4' value='3/4' />
             <Picker.Item label='7/8' value='7/8' />
           </Picker>
-          <Text>[60 inches]</Text>
+          <Text style={styles.paramtext}>60 inches</Text>
         </View>        
         <Text style={styles.paramtext}>Notions</Text>
         <Input

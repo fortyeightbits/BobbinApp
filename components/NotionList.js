@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     flex : 1, 
   },
   flatlist:{
-    height: 80,
+    height: 40,
     flexGrow: 0,
     borderColor: 'white',
     marginBottom: 10,

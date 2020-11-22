@@ -162,7 +162,7 @@ export default function FabricListScreen ({ navigation, route }) {
         data={state.inventory}
         renderItem={({ item }) => {
           return (
-            <TouchableOpacity onPress={() => { navigation.push('FabricScreen', item) }}>
+            <TouchableOpacity onPress={() => { navigation.push('FabricScreen', item) }} style={styles.touchable}>
               <Text style={styles.fabricdes}>
                 <Text style={styles.fabricname}>{item.name + (item.name ? '  ' : '')}</Text>
                 {item.yardage + (item.yardage ? ' ' : '') + (item.yardfrac ? item.yardfrac + ' ' : '') + ((item.yardage || item.yardfrac) ? 'yards ' : '') +
@@ -189,6 +189,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  touchable: {
+    marginBottom: 1,
+  },
   addicon: {
     padding: 10,
     position: 'absolute',
@@ -200,11 +203,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Proxima',
     fontSize: 15,
     textTransform: 'lowercase',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    backgroundColor: 'white',
   },
   fabricname: {
     fontSize: 18,
-    fontWeight: 'bold',
     textTransform: 'capitalize'
   },
   image: {

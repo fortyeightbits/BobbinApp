@@ -154,7 +154,7 @@ export default function ProjectListScreen ({ navigation, route }) {
       projectlist: [
         {
           id: '0',
-          title: 'In Progress',
+          title: 'Planned',
           data: []
         },
         {
@@ -247,7 +247,7 @@ export default function ProjectListScreen ({ navigation, route }) {
             })
           }
           return (
-          <TouchableOpacity onPress={() => { navigation.push('ProjectScreen', item) }}>
+          <TouchableOpacity onPress={() => { navigation.push('ProjectScreen', item) }} style={styles.touchable}>
             <View style={styles.listheading}>
               <Text style={styles.projectname}>{item.projectName}{item.projectName && item.patternName ? " | " : ""}
                 {item.patternName}
@@ -281,6 +281,9 @@ const styles = StyleSheet.create({
   flexrow: {
     flexDirection: 'row'
   },
+  touchable: {
+    marginBottom: 1,
+  },
   header: {
     fontFamily: 'SpaceMono-Regular',
     fontSize: 15,
@@ -304,12 +307,13 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingTop: 15,
     paddingBottom: 15,
+    backgroundColor: 'white',
   },
   projectname: {
     fontFamily: 'Proxima',
     fontSize: 18,
     textTransform: 'capitalize',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   separator: {
     marginVertical: 30,

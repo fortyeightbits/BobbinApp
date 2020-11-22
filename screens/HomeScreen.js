@@ -137,7 +137,7 @@ export default function HomeScreen ({ navigation, route }) {
       <Card>
         <Card.Title style={styles.headerTitleStyle}>Projects</Card.Title>
         <Card.Divider />
-        <Text style={styles.cardtext}>{'You have ' + projCnt + ' ' + (projCnt > 1 ? 'projects' : 'project') + ' in progress and ' 
+        <Text style={styles.cardtext}>{'You have ' + projCnt + ' ' + (projCnt > 1 ? 'projects' : 'project') + ' planned and ' 
         + projDoneCnt + ' ' + (projDoneCnt > 1 ? 'projects' : 'project') + ' completed.'}</Text>
         <Button
           type='outline' title='Go to Project List' titleStyle={styles.buttonText}
